@@ -1,0 +1,17 @@
+@charset "UTF-8";
+@use 'value' as v;
+@use 'color' as c;
+@use 'font' as f;
+
+@mixin component_button($width, $height, $border-radius, $color){
+  display         : flex;
+  justify-content : center;
+  align-items     : center;
+  width           : $width;
+  max-height      : $height;
+  font-family     : f.family('english');
+  color           : c.$white;
+  border-radius   : $border-radius;
+  background-color: $color;
+  letter-spacing  : 0.1em;
+}

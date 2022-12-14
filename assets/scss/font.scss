@@ -1,0 +1,62 @@
+@use "sass:math";
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Open+Sans:wght@400;500;600;700&display=swap');
+
+$fontBaseSizeMap: (
+  "desktop": 16px,
+  "mobile": 14px,
+);
+
+@function calcRemFontSize($fontSize) {
+  @return #{(math.div(round((math.div($fontSize, 16)) * 100), 100)) * 1rem};
+}
+
+$fontSizeMap: (
+  "medium": 1rem,
+  "max": calcRemFontSize(36),
+  "large": calcRemFontSize(20),
+  "normal": calcRemFontSize(16),
+  "small": calcRemFontSize(14),
+  "smaller": calcRemFontSize(12),
+  "min": calcRemFontSize(10),
+  "heading": calcRemFontSize(56),
+);
+
+$fontFamilyMap: (
+  "base": "Noto Sans JP",
+  "english": "Open Sans",
+  "heading": "josefin-slab",
+);
+
+
+$lineHeightMap: (
+  "normal": 1.8,
+  "narrowed": 1.4,
+);
+
+$letterSpacingMap: (
+  "long": 0.35em,
+  "normal": 0.02em,
+  "space": 0.16em,
+  "narrowed": 0.08em,
+  "narrow": -0.05em,
+);
+
+@function baseSize($key) {
+  @return map-get($fontBaseSizeMap, $key);
+}
+
+@function size($key) {
+  @return map-get($fontSizeMap, $key);
+}
+
+@function family($key) {
+  @return map-get($fontFamilyMap, $key);
+}
+
+@function lineHeight($key) {
+  @return map-get($lineHeightMap, $key);
+}
+
+@function letterSpacing($key) {
+  @return map-get($letterSpacingMap, $key);
+} ;
