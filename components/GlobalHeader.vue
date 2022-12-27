@@ -68,6 +68,7 @@ export default {
   h1 {
     font-size  : calc(var(--sv) * 2);
     font-family: f.family('english');
+    font-weight: bolder;
   }
 }
 

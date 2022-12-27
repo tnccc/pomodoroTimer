@@ -1,3 +1,5 @@
+@use "sass:math";
+
 $val: .5rem;
 $desktopScreenSize: 1280px;
 $tabletWidthScreenSize: 1024px;
@@ -65,11 +67,11 @@ $breakpoints: (
   @return #{$value};
 }
 
-//自作clamp関数
+//clamp関数
 @function clampFunc($min, $default, $max, $bp: 1920) {
-  $min: $min * 1;
-  $max: $max * 1;
-  $num: $min / $bp * 100;
+  $min: $min * 1; 
+  $max: $max * 1; 
+  $num: math.div($min, $bp) * 100; 
   $base: #{$num};
   @return clamp(#{$min}px, #{$base}vw, #{$max}px)
 }

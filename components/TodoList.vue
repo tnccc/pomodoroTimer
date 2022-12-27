@@ -12,7 +12,8 @@
           :class="$style.heading"
         >
           Tasks
-          <span :class="$style.num">{{ task }}</span>
+          <!-- タスクを追加するとタスク数が分かるようにしたい -->
+          <span :class="$style.num">{{ itemLength }}</span>
         </h2>
         <button
           :class="$style.heading_button"
@@ -26,71 +27,95 @@
         <div
           :class="$style.todo_list"
         >
-          <button
-            v-if="!taskDisplay"
-            @click="taskDisplay = !taskDisplay"
-            v-for="(item, index) in todos"
-            key="index"
+          <TodoItem
+            v-if="addTaskDisplay"
+            :type="'task'"
+            v-model="todoItem"
+          >
+            <span
+              @click="deleteTodo"
+              :class="$style.todo_task"
+            />
+          </TodoItem>
+          <TodoItem
+            v-if="taskDisplay"
+            :type="'default'"
+            @onClick="taskDisplay = !taskDisplay"
+            v-for="(item, key) in todos"
+            :key="key"
             :class="$style.todo_item"
           >
-              {{ item.task }}
-          </button>
-          <div
+            {{ item.task }}
+          </TodoItem>
+          <TodoItemAdd
             v-else
-            :class="$style.todo_item_add"
           >
-            <textarea 
-              type="textarea"
-              placeholder="簡単な説明を入力しましょう。"
+            <CommonButton
+              @onClick="addTodo"
+              :btnText="'Save'"
             >
-            </textarea>
-            <input
-              type="input"
-              v-model="task"
+            </CommonButton>
+            <CommonButton
+              @onClick="taskDisplay = !taskDisplay"
+              :btnText="'Cancel'"
             >
-            <div
-              :class="$style.todo_item_btn_area"
-            >
-              <button
-                :class="[$style.todo_item_btn ,$style.todo_item_save]"
-              >
-                <span
-                  @click="taskInsert"
-                >
-                  Save
-                </span>
-              </button>
-              <button
-                @click="taskDisplay = !taskDisplay"
-                :class="[$style.todo_item_btn ,$style.todo_item_cancel]"
-              >
-                <span>Cansel</span>
-              </button>
-            </div>
-          </div>
+            </CommonButton>
+          </TodoItemAdd>
+          
         </div>
       </div>
+    </div>
+    <!-- sample -->
+    <div class="sample">
+        <textarea
+          type="textarea"
+          placeholder="簡単な説明を入力しましょう。"
+          v-model="sampleText"
+        ></textarea>
+        <button @click="addTodoSample">sampleAdd</button>
     </div>
   </div>
 </template>
 
 <script>
-import {mapState} from 'vuex'
+import {mapActions, mapGetters} from 'vuex';
 
 export default {
   name: 'TodoList',
   data() {
     return {
-      task: "",
-      taskDisplay: false,
+      sampleText: '',
+      todoItem: "",
+      itemLength: 0,
+      taskDisplay: true,
+      addTaskDisplay: false,
     }
   },
   computed: {
-    ...mapState(['todos'])
+    ...mapGetters({
+      todos: 'todo/todoList'
+    })
   },
   methods: {
-    taskInsert() {
-
+    ...mapActions({
+      addTodoItem: 'todo/add',
+      deleteItem: 'todo/delete'
+    }),
+    addTodo(text) {
+      console.log('before call action=>',text);
+      // this.addTodoItem(this.todoItem)
+      this.addTodoItem(text)
+      this.todoItem = ""
+      this.taskDisplay = true
+      this.addTaskDisplay = true
+    },
+    addTodoSample() {
+      this.addTodoItem(this.sampleText)
+      this.sampleText = ""
+    },
+    deleteTodo(key) {
+      console.log('fire')
+      this.deleteItem(key)
     },
   },
 }
@@ -108,7 +133,7 @@ export default {
 }
 
 .container {
-  padding: 0 calc(var(--sv) * 4);
+  padding: 0 v.clampFunc(20, 24, 32, 1024);
 }
 
 .heading {
@@ -126,7 +151,6 @@ export default {
 }
 
 .todo {
-
     &_list {
       margin-top : calc(var(--sv) * 2.5);
       display    : grid;
@@ -134,64 +158,29 @@ export default {
       gap        : calc(var(--sv) * 3) 0;
     }
 
-    &_item {
-      padding      : calc(var(--sv) * 2);
-      width        : 100%;
-      display      : flex;
-      align-items  : center;
-      color        : c.$gray;
-      gap          : 0 var(--sv);
-      border       : dashed 2px #CBD5E1;
-      border-radius: 12px;
-      box-shadow: 0 0 10px 3px rgba(0,0,0, .1);
+    &_task {
+      position        : relative;
+      width           : calc(var(--sv) * 2.5);
+      height          : calc(var(--sv) * 2.5);
+      border          : solid 1px c.$gray;
+      border-radius   : 50%;
+      background-color: transparent;
+      pointer-events  : auto;
+      
+      &:hover {
 
-      &::before {
-        content         : "";
-        display         : block;
-        width           : 13px;
-        height          : 2px;
-        background-color: c.$gray;
-      }
-
-      &::after {
-        content   : "";
-        position  : absolute;
-        display   : block;
-        width     : 13px;
-        height    : 2px;
-        background: c.$gray;
-        transform : rotate(90deg);
-      }
-
-      &_add {
-        padding: calc(var(--sv) * 2);
-        width        : 100%;
-        border       : solid 2px #CBD5E1;
-        border-radius: 12px;
-        box-shadow: 0 0 10px 3px rgba(0,0,0, .1);
-
-        textarea {
-          width : 100%;
-          resize: none;
-          
-          &::placeholder {
-            color: rgba(95, 99, 104, .5);
-          }
-        }
-      }
-
-      &_btn {
-        @include m.component_button(6rem, 4rem, 10px, c.$accentColor);
-        padding: 2px 0;
-
-        &_area {
-          display        : flex;
-          gap            : 0 calc(var(--sv) * 3.5);
+        &:before {
+          content      : "";
+          position     : absolute;
+          top          : 4px;
+          left         : 3px;
+          width        : 12px;
+          height       : 7px;
+          border-left  : 3px solid c.$mainGreen;
+          border-bottom: 3px solid c.$mainGreen;
+          transform    : rotate(-45deg);
         }
       }
     }
 }
-
-
-
 </style>

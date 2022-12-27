@@ -128,7 +128,9 @@ export default {
       ],
     }
   },
-  
+  mounted() {
+    console.log(this.mode)
+  },
   methods: {
     countCheck() {
       if(this.status === 0) {
@@ -198,9 +200,6 @@ export default {
       this.sec = this.countSegmentation(this.time % 60, 2)
       console.log(this.mode)
       console.log(this.status)
-    },
-    countRest() {
-
     },
   },
 }
