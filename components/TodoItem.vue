@@ -1,6 +1,5 @@
 <template>
   <button
-    v-if="type === 'default' || 'task'"
     @click="onClick"
     :class="[$style.item, type === 'task' ? $style.task : '']"
   >

@@ -10,7 +10,14 @@
     <div
       :class="$style.btn_wrap"
     >
-      <slot />
+      <CommonButton
+        @onClick="SaveButtonClick"
+        btnText="save"
+      />
+      <CommonButton
+        @onClick="CancelButtonClick"
+        btnText="cancel"
+      />
     </div>
     
   </div>
@@ -19,17 +26,18 @@
 <script>
 export default {
   name: 'TodoItemAdd',
-  data() {
+  data() {  
     return {
       text: '',
     }
   },
   methods: {
-    onClick() {
-      console.log('■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■')
-      console.log('before emit', this.text)
-      console.log('■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■')
-      this.$emit('onClick', this.text);
+    SaveButtonClick() {
+      console.log('CommonButton => AddTodo')
+      this.$emit('saveButtonClick', this.text)
+    },
+    CancelButtonClick() {
+      this.$emit('cancelButtonClick')
     },
   },
 }
