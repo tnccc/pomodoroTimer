@@ -6,11 +6,19 @@
       type="textarea"
       placeholder="簡単な説明を入力しましょう。"
       v-model="text"
-    ></textarea>
+    >
+    </textarea>
     <div
       :class="$style.btn_wrap"
     >
-      <slot />
+      <CommonButton
+        @onClick="SaveButtonClick"
+        btnText="save"
+      />
+      <CommonButton
+        @onClick="CancelButtonClick"
+        btnText="cancel"
+      />
     </div>
     
   </div>
@@ -19,17 +27,17 @@
 <script>
 export default {
   name: 'TodoItemAdd',
-  data() {
+  data() {  
     return {
       text: '',
     }
   },
   methods: {
-    onClick() {
-      console.log('■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■')
-      console.log('before emit', this.text)
-      console.log('■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■')
-      this.$emit('onClick', this.text);
+    SaveButtonClick() {
+      this.$emit('saveButtonClick', this.text)
+    },
+    CancelButtonClick() {
+      this.$emit('cancelButtonClick')
     },
   },
 }
@@ -42,7 +50,7 @@ export default {
 @use "@/assets/scss/mixin" as m;
 
 .item {
-  padding: calc(var(--sv) * 2);
+  padding: calc(var(--bv) * 2);
   width        : 100%;
   border       : solid 2px #CBD5E1;
   border-radius: 12px;
@@ -62,7 +70,7 @@ export default {
 
   &_wrap {
     display: flex;
-    gap    : 0 calc(var(--sv) * 3.5);
+    gap    : 0 calc(var(--bv) * 3.5);
   }
 }
 </style>

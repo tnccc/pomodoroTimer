@@ -55,7 +55,7 @@ export default {
 @use "@/assets/scss/font" as f;
 
 .header {
-  padding: calc(var(--sv) * 2) v.viewMargin(1400, 24);
+  padding: calc(var(--bv) * 2) v.viewMargin(1400, 24);
 }
 
 .container {
@@ -66,7 +66,7 @@ export default {
 .logo {
 
   h1 {
-    font-size  : calc(var(--sv) * 2);
+    font-size  : calc(var(--bv) * 2);
     font-family: f.family('english');
     font-weight: bolder;
   }
@@ -76,7 +76,7 @@ export default {
   display        : flex;
   justify-content: flex-end;
   align-items    : center;
-  gap            : 0 calc(var(--sv)* 2);
+  gap            : 0 calc(var(--bv)* 2);
 }
 
 .item {
@@ -89,7 +89,7 @@ export default {
   
   &_container {
     display: flex;
-    gap: 0 calc(var(--sv) / 2);
+    gap: 0 calc(var(--bv) / 2);
   }
 }
 </style>
