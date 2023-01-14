@@ -1,10 +1,4 @@
 <template>
-  <!--
-    <add-todo-form/>
-    <todo-list
-      :data="data"
-    /> 表示するToDoのデータはこのコンポーネントからバインドする
-  -->
   <div
     :class="$style.container"
   >
@@ -33,7 +27,7 @@
                 >
                   Tasks
                 <span :class="$style.num">
-                  {{ todos.length - 1 }}
+                  {{ todos.length  }}
                 </span>
                 </h2>
                 <button
@@ -45,17 +39,29 @@
               <div
                 :class="$style.todo_content"
               >
-                <AddTodo 
-                  v-if="displayStatus"
-                  @saveButtonClick="addTodo"
-                  @cancelButtonClick="cancelButtonClick"
-                />
-                <TodoList 
-                  v-else-if="!displayStatus"
-                  @todoItemClick="displayStatus = !displayStatus"
-                  :todos="todos"
-                  :addTask="addTask"
-                />
+                <div
+                  :class="$style.todo_list_container"
+                >
+                  <TodoList 
+                    :todos="todos"
+                    @editButtonClick="editButtonClick"
+                  />
+                </div>
+                <div>
+                  <AddTodo 
+                    v-if="todoAddMode" 
+                    @saveButtonClick="addTodo"
+                    @cancelButtonClick="cancelButtonClick"
+                    :class="$style.todo_add"
+                  />
+                  <!-- タスク一覧下部に固定配置 -->
+                  <button
+                    v-if="!todoAddMode" @click="startAddMode"
+                    :class="$style.todo_input"
+                  > 
+                    タスクを入力をしてください。
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -63,6 +69,7 @@
       </div>
     </main>
     <SoundPlayer
+      :class="$style.sound"
     />
   </div>
 </template>
@@ -70,23 +77,13 @@
 <script>
 import {mapActions, mapGetters} from 'vuex';
 
-// TODO
-// STEP1: add-todo-formからTodoを追加できるようにする(コンポーネントしなくても良い。TodoList.vueの処理を参考に)
-
-// STEP2: TodoList.vueに対してtodosをバインドできるようにする。また、そのバインドしたデータがTodoList.vueで表示できるようにする
-//=> TodoList.vueにはpropsの定義がないので追加してください。
-// STEP3: TodoList.vueのゴミと思われるコード消す
-// STEP4: TodoItem.vueのゴミと思われるコード消す
-
 export default {
   name: 'Top-Page',
-
-  //Todoの処理を記述する
   data() {
     return {
-      displayStatus: false,
-      addTask      : false,
-      text         : '',
+      todoAddMode: false,
+      isDisabled : true,
+      text       : '',
     }
   },
   computed: {
@@ -102,17 +99,22 @@ export default {
     addTodo(text) {
       this.text = text
       if(!text || text.trim().length === 0) {
-        this.displayStatus = false
+        this.todoAddMode = false
       } else {
         console.log('=> testClick', text)
         this.addTodoItem(text)
-        this.displayStatus = false
-        this.addTask = true
+        this.todoAddMode = false
       }
       
     },
     cancelButtonClick() {
-      this.displayStatus = false
+      this.todoAddMode = false
+    },
+    startAddMode() {
+      this.todoAddMode = true
+    },
+    editButtonClick(item) {
+      console.log(item)
     },
   },
 }
@@ -125,34 +127,43 @@ export default {
 @use "@/assets/scss/mixin" as m;
 
 .container {
-  width         : 100%;
-  --sv          : .5rem;
-  --black       : #202124;
-  --light-gray  : #E2E8F0;
-  --accent-color: #0B57D0;
+  width           : 100%;
+  --bv            : .5rem;
+  --white         : #fff;
+  --black         : #202124;
+  --gray          : #5F6368;
+  --light-gray    : #E2E8F0;
+  --dull-gray     : #CBD5E1;
+  --accent-color  : #0B57D0;
 }
 
 .contents {
-  margin-top: v.viewMargin(1400, 64);
+  margin-top       : v.viewMargin(1400, 40);
+  scroll-snap-align: start;
 
   &_grid {
-    display: grid;
-    grid-template-columns: 70% 30%;
+    display: flex;
   }
 }
 
+.timer {
+  flex  : 1 0 auto;
+  height: calc(100vh - 45px);
+}
+
 .todo {
-  padding    : 0 v.clampFunc(20, 24, 32, 1024);
-  display    : grid;
-  place-items: start;
+  padding       : 0 v.clampFunc(20, 24, 32, 1024);
+  display       : flex;
+  flex-direction: column;
   
   &_wrapper {
-    min-width  : 300px;
-    border-left: solid 2px c.$lightGray;
+    flex       : 0 0 30%;
+    border-left: solid 2px var(--light-gray);
   }
 
   &_content {
-    margin-top: calc(var(--sv) * 2);
+    position  : relative;
+    margin-top: calc(var(--bv) * 2);
     width     : 100%;
   }
 
@@ -160,7 +171,7 @@ export default {
     font-weight: bolder;
 
     .num {
-      margin-left: var((--sv));
+      margin-left: var((--bv));
     }
 
     &_wrapper {
@@ -174,5 +185,47 @@ export default {
       width      : 2rem;
     }
   }
+
+  &_input {
+    margin-top   : calc(var(--bv) * 2);
+    padding      : v.clampFunc(12, 16, 16, 1024);
+    width        : 100%;
+    display      : flex;
+    align-items  : center;
+    font-size    : v.clampFunc(14, 15, 16, 1024);
+    color        : c.$gray;
+    gap          : 0 var(--bv);
+    border       : dashed 2px var(--dull-gray);
+    border-radius: 12px;
+    box-shadow   : inset 0 0 14px 3px rgba(0 0 0 / .1);
+
+    &::before {
+      content         : "";
+      display         : block;
+      width           : 13px;
+      height          : 2px;
+      background-color: var(--gray);
+    }
+
+    &::after {
+      content   : "";
+      position  : absolute;
+      display   : block;
+      width     : 13px;
+      height    : 2px;
+      background: var(--gray);
+      transform : rotate(90deg);
+    }
+  }
+
+  &_add {
+    margin-top   : calc(var(--bv) * 2);
+  }
+}
+
+.sound {
+  position: fixed;
+  bottom  : 0;
+  width   : 100%;
 }
 </style>

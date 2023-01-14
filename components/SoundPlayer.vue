@@ -46,6 +46,11 @@ export default {
           images: 'bgm_skip_next',
           alt: 'nextButton',
         },
+        {
+          id: '5',
+          images: 'bgm_volume',
+          alt: 'volumeButton',
+        },
       ],
     }
   }
@@ -59,13 +64,27 @@ export default {
 @use "@/assets/scss/mixin" as m;
 
 .container {
-  position: fixed;
-  bottom  : 0;
-  width   : 100%;
-  background-color: rgba(#F1F5F9, .8);
+  width           : 100%;
+  background-color: rgba(#F1F5F9, .95);
+  box-shadow      : 0 0 6px rgba(0 0 0 / 20%);
 }
 
 .wrapper {
-  display: grid;
+  padding    : var(--bv) calc(var(--bv) * 3);
+}
+
+.list {
+  display    : flex;
+  align-items: center;
+  gap        : 0 calc(var(--bv) * 4);
+}
+
+.button {
+  width : 1.8rem;
+  height: 1.8rem;
+
+  img {
+    width: 100%;
+  }
 }
 </style>

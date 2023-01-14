@@ -1,34 +1,31 @@
 export const state = () => ({
-  todos: [
-    {
-      task: 'タスクを入力してください',
-    }
-  ]
+    todos: []
 })
 
 export const mutations = {
-  setItem(state, text) {
-    // console.log('mutations/text', text)
-    state.todos.push({task:text})
-  },
-  deleteItem(state, key) {
-    state.todos.splice(key, 1)
-  }
+    setItem(state, todo) {
+        state.todos.push(todo)
+    },
+    deleteItem(state, todo) {
+        state.todos.splice(todo, 1)
+    }
 }
 
 export const getters = {
-  todoList(state) {
-    return state.todos
-  },
+    todoList(state) {
+        return state.todos
+    },
+    nextId(state) {
+        return `id-${state.todos.length + 1}`
+    }
 }
 
 export const actions = {
-  add({commit}, text) {
-    // console.log('acitons/add', text)
-    commit('setItem', text)
-  },
-  delete({commit}, key) {
-    // console.log('actions/delete', key)
-    commit('deleteItem', key)
-  }
+    add({ commit, getters }, text) {
+        const todo = ({ id: getters.nextId, task: text })
+        commit('setItem', todo)
+    },
+    delete({ commit }, todo) {
+        commit('deleteItem', todo)
+    }
 }

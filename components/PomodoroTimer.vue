@@ -213,7 +213,7 @@ export default {
 
 .button {
   position   : relative;
-  font-size  : calc(var(--sv) * 2);
+  font-size  : calc(var(--bv) * 2);
   font-family: f.family('english');
   background : none;
 
@@ -255,7 +255,7 @@ export default {
   &_container {
     display        : flex;
     justify-content: center;
-    gap            : 0 calc(var(--sv) * 7);
+    gap            : 0 calc(var(--bv) * 7);
   }
 
   .num {
@@ -272,12 +272,12 @@ export default {
 }
 
 .timer {
-  margin-top: calc(var(--sv) * 4.5);
+  margin-top: calc(var(--bv) * 4.5);
   
   &_container {
     position        : relative;
     margin          : 0 auto;
-    padding-top     : calc(var(--sv) * 7.5);
+    padding-top     : calc(var(--bv) * 7.5);
     display         : flex;
     justify-content : center;
     width           : 26.5rem;
@@ -305,9 +305,9 @@ export default {
 
     button {
       @include m.component_button(22.5rem, 60px, 20px, c.$accentColor);
-      margin-top : calc(var(--sv) * 4);
-      padding    : calc(var(--sv) * 3);
-      font-size  : calc(var(--sv) * 2.5);
+      margin-top : calc(var(--bv) * 4);
+      padding    : calc(var(--bv) * 3);
+      font-size  : calc(var(--bv) * 2.5);
       font-weight: bold;
       box-shadow : 0 4px 4px 2px rgba($color: #000000, $alpha: .08);
 
@@ -318,7 +318,7 @@ export default {
   }
 
   &_count {
-    font-size      : calc(var(--sv) * 13 - 4px);
+    font-size      : calc(var(--bv) * 13 - 4px);
     font-weight    : bolder;
     color          : c.$blue;
 
@@ -340,7 +340,7 @@ export default {
     &::after {
       content : ":";
       position: relative;
-      bottom  : var(--sv);
+      bottom  : var(--bv);
       display : block;
     }
   }
@@ -349,18 +349,18 @@ export default {
     text-align: center;
 
     p {
-      font-size  : calc(var(--sv) * 2);
+      font-size  : calc(var(--bv) * 2);
       font-weight: normal;
       line-height: 1.65;
       color      : c.$black;
     }
 
     .timer_quote {
-      margin-top: var(--sv);
+      margin-top: var(--bv);
     }
 
     .timer_name {
-      margin-top: calc(var(--sv) * 3);
+      margin-top: calc(var(--bv) * 3);
     }
   }
 }

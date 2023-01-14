@@ -6,7 +6,8 @@
       type="textarea"
       placeholder="簡単な説明を入力しましょう。"
       v-model="text"
-    ></textarea>
+    >
+    </textarea>
     <div
       :class="$style.btn_wrap"
     >
@@ -33,7 +34,6 @@ export default {
   },
   methods: {
     SaveButtonClick() {
-      console.log('CommonButton => AddTodo')
       this.$emit('saveButtonClick', this.text)
     },
     CancelButtonClick() {
@@ -50,7 +50,7 @@ export default {
 @use "@/assets/scss/mixin" as m;
 
 .item {
-  padding: calc(var(--sv) * 2);
+  padding: calc(var(--bv) * 2);
   width        : 100%;
   border       : solid 2px #CBD5E1;
   border-radius: 12px;
@@ -70,7 +70,7 @@ export default {
 
   &_wrap {
     display: flex;
-    gap    : 0 calc(var(--sv) * 3.5);
+    gap    : 0 calc(var(--bv) * 3.5);
   }
 }
 </style>
