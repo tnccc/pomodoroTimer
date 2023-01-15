@@ -10,7 +10,8 @@
       />
       <textarea
         v-model="todoMessage"
-        :disabled="!editable"
+        @keydown="editEnd"
+        :disabled="!editAble"
         :class="$style.item_text"
       >
       </textarea>
@@ -26,12 +27,13 @@
         </button>
         <button
           v-if="editMode"
+          @click=""
           :class="$style.item_btn"
-          @click="editStart"
         >
           <img src="@/assets/images/task_save.svg" alt="taskSave">
         </button>
         <button
+          @click="deleteButtonClick"
           :class="$style.item_btn"
         >
           <img src="@/assets/images/task_delete.svg" alt="taskdelete">
@@ -47,9 +49,15 @@ export default {
   name: 'TodoItem',
   data() {
     return {
+<<<<<<< HEAD
+      todoMessage          : '',
+      editAble             : false,
+      editMode             : false,
+=======
       todoMessage: '',
       editAble: false,
       editMode: false,
+>>>>>>> develop
     }
   },
   created() {
@@ -62,24 +70,24 @@ export default {
     },
   },
   methods: {
-    // editButton(index, text) {
-    //   text = this.todos[index].task
-    //   this.$emit('editButton', index)
-    // },
     editStart() {
       this.editAble = true
       this.editMode = true
     },
-    editEnd() {
-      console.log('keydown enter!!!')
-      this.editable = false
+    editEnd(e) {
+      //TodoItem内でエンター押下時(IME確定時)にdisabledの処理を変更
+      if(e.keyCode === 13) {
+        this.editAble = false
+        this.editMode = false
+        return
+      }
     },
     save() {
       // TODO:ここは佐藤と一緒にやりましょう(Editの保存は少し複雑なので)
     },
     deleteButtonClick() {
       // TODO:emitの引数にはthis.todoを突っ込みましょう
-      this.$emit('deleteButtonClick')
+      this.$emit('deleteButtonClick', this.todo)
     },
   },
 }

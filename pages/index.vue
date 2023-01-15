@@ -43,8 +43,8 @@
                   :class="$style.todo_list_container"
                 >
                   <TodoList 
+                    @deleteTodoStart="deleteTodoStart"
                     :todos="todos"
-                    @editButtonClick="editButtonClick"
                   />
                 </div>
                 <div>
@@ -82,7 +82,10 @@ export default {
   data() {
     return {
       todoAddMode: false,
+<<<<<<< HEAD
+=======
       isDisabled : true,
+>>>>>>> develop
       text       : '',
     }
   },
@@ -105,16 +108,15 @@ export default {
         this.addTodoItem(text)
         this.todoAddMode = false
       }
-      
+    },
+    deleteTodoStart(todo) {
+      this.deleteItem(todo)
     },
     cancelButtonClick() {
       this.todoAddMode = false
     },
     startAddMode() {
       this.todoAddMode = true
-    },
-    editButtonClick(item) {
-      console.log(item)
     },
   },
 }
