@@ -82,6 +82,10 @@ export default {
   data() {
     return {
       todoAddMode: false,
+<<<<<<< HEAD
+=======
+      isDisabled : true,
+>>>>>>> develop
       text       : '',
     }
   },
@@ -114,7 +118,6 @@ export default {
     startAddMode() {
       this.todoAddMode = true
     },
-
   },
 }
 </script>
