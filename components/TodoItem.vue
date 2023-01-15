@@ -49,15 +49,9 @@ export default {
   name: 'TodoItem',
   data() {
     return {
-<<<<<<< HEAD
       todoMessage          : '',
       editAble             : false,
       editMode             : false,
-=======
-      todoMessage: '',
-      editAble: false,
-      editMode: false,
->>>>>>> develop
     }
   },
   created() {

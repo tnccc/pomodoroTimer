@@ -3,71 +3,69 @@
     :class="$style.container"
   >
     <GlobalHeader />
-    <main>
+    <div
+      :class="$style.contents"
+    >
       <div
-        :class="$style.contents"
+        :class="$style.contents_grid"
       >
+        <PomodoroTimer 
+          :class="$style.timer"
+        />
         <div
-          :class="$style.contents_grid"
+          :class="$style.todo_wrapper"
         >
-          <PomodoroTimer 
-            :class="$style.timer"
-          />
           <div
-            :class="$style.todo_wrapper"
+            :class="$style.todo"
           >
             <div
-              :class="$style.todo"
+              :class="$style.todo_heading_wrapper"
+            >
+              <h2
+                :class="$style.todo_heading"
+              >
+                Tasks
+              <span :class="$style.num">
+                {{ todos.length  }}
+              </span>
+              </h2>
+              <button
+                :class="$style.todo_heading_button"
+              >
+                <img src="@/assets/images/task_menu.svg" alt="taskmenu">
+              </button>
+            </div>
+            <div
+              :class="$style.todo_content"
             >
               <div
-                :class="$style.todo_heading_wrapper"
+                :class="$style.todo_list_container"
               >
-                <h2
-                  :class="$style.todo_heading"
-                >
-                  Tasks
-                <span :class="$style.num">
-                  {{ todos.length  }}
-                </span>
-                </h2>
-                <button
-                  :class="$style.todo_heading_button"
-                >
-                  <img src="@/assets/images/task_menu.svg" alt="taskmenu">
-                </button>
+                <TodoList 
+                  @deleteTodoStart="deleteTodoStart"
+                  :todos="todos"
+                />
               </div>
-              <div
-                :class="$style.todo_content"
-              >
-                <div
-                  :class="$style.todo_list_container"
-                >
-                  <TodoList 
-                    @deleteTodoStart="deleteTodoStart"
-                    :todos="todos"
-                  />
-                </div>
-                <div>
-                  <AddTodo 
-                    v-if="todoAddMode" 
-                    @saveButtonClick="addTodo"
-                    @cancelButtonClick="cancelButtonClick"
-                    :class="$style.todo_add"
-                  />
-                  <!-- タスク一覧下部に固定配置 -->
-                  <button
-                    v-if="!todoAddMode" @click="startAddMode"
-                    :class="$style.todo_input"
-                  > 
-                    タスクを入力をしてください。
-                  </button>
-                </div>
+              <div>
+                <AddTodo 
+                  v-if="todoAddMode" 
+                  @saveButtonClick="addTodo"
+                  @cancelButtonClick="cancelButtonClick"
+                  :class="$style.todo_add"
+                />
+                <!-- タスク一覧下部に固定配置 -->
+                <button
+                  v-if="!todoAddMode" @click="startAddMode"
+                  :class="$style.todo_input"
+                > 
+                  タスクを入力をしてください。
+                </button>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </main>
+    </div>
     <SoundPlayer
       :class="$style.sound"
     />
@@ -82,10 +80,6 @@ export default {
   data() {
     return {
       todoAddMode: false,
-<<<<<<< HEAD
-=======
-      isDisabled : true,
->>>>>>> develop
       text       : '',
     }
   },
