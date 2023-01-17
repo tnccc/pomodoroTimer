@@ -31,7 +31,7 @@
           <div
             :class="$style.item_container"
           >
-            <img :class="$style.icon" src="@/assets/images/setting.svg" alt="">
+            <MenuSetting />
             <p>設定</p>
           </div>
         </li>
@@ -41,8 +41,13 @@
 </template>
 
 <script>
+import MenuSetting from '@/assets/images/setting.svg'
+
 export default {
   name: 'GlobalHeader',
+  components: { 
+    MenuSetting,
+  },
   data() {
     return {
     }
@@ -59,7 +64,7 @@ export default {
 }
 
 .container {
-  display: grid;
+  display              : grid;
   grid-template-columns: 2fr 1fr;
 }
 
@@ -80,7 +85,7 @@ export default {
 }
 
 .item {
-  cursor: pointer;
+  cursor    : pointer;
   transition: opacity .2s;
 
   &:hover {
@@ -88,8 +93,9 @@ export default {
   }
   
   &_container {
-    display: flex;
-    gap: 0 calc(var(--bv) / 2);
+    display    : flex;
+    align-items: center;
+    gap        : 0 calc(var(--bv) / 2);
   }
 }
 </style>
