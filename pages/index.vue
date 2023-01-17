@@ -32,8 +32,34 @@
               <button
                 :class="$style.todo_heading_button"
               >
-                <img src="@/assets/images/task_menu.svg" alt="taskmenu">
+                <TaskDots 
+                  @click="todoDropdownOpen = !todoDropdownOpen"
+                  :class="$style.dots"
+                />
               </button>
+              <div
+                v-if="todoDropdownOpen"
+                :class="$style.todo_dropdown"
+              >
+                <div
+                  :class="$style.todo_dropdown_item"
+                >
+                  <TaskHide />
+                  完了したタスクを非表示にする
+                </div>
+                <div
+                  :class="$style.todo_dropdown_item"
+                >
+                  <TaskDelete />  
+                  タスクを削除する
+                </div>
+                <div
+                  :class="$style.todo_dropdown_item"
+                >
+                  <TaskDelete />
+                  完了したタスクを削除する
+                </div>
+              </div>
             </div>
             <div
               :class="$style.todo_content"
@@ -73,13 +99,22 @@
 </template>
 
 <script>
+import TaskDots from '@/assets/images/task_dots.svg'
+import TaskDelete from '@/assets/images/task_delete.svg'
+import TaskHide from '@/assets/images/task_hide.svg'
 import {mapActions, mapGetters} from 'vuex';
 
 export default {
   name: 'Top-Page',
+  components: {
+    TaskDots,
+    TaskHide,
+    TaskDelete,
+  },
   data() {
     return {
       todoAddMode: false,
+      todoDropdownOpen: false,
       text       : '',
     }
   },
@@ -104,7 +139,8 @@ export default {
       }
     },
     deleteTodoStart(todo) {
-      this.deleteItem(todo)
+      const result = window.confirm('タスクを削除しますか？')
+      result ? this.deleteItem(todo) : ''
     },
     cancelButtonClick() {
       this.todoAddMode = false
@@ -127,6 +163,7 @@ export default {
   --bv            : .5rem;
   --white         : #fff;
   --black         : #202124;
+  --blue          : #0B57D0;
   --gray          : #5F6368;
   --light-gray    : #E2E8F0;
   --dull-gray     : #CBD5E1;
@@ -171,14 +208,76 @@ export default {
     }
 
     &_wrapper {
+      position             : relative;
       display              : grid;
       width                : 100%;
       grid-template-columns: 2fr 1fr;
     }
 
     &_button {
-      margin-left: auto;
-      width      : 2rem;
+      margin-left     : auto;
+      width           : 2rem;
+      height          : 2rem;
+      border-radius   : 50%;
+      background-color: var(--dull-gray);
+      transition      : background-color .3s;
+
+      .dots {
+        width     : 14px;
+        height    : 14px;
+        
+        circle {
+          transition: fill .3s;
+        }
+      }
+
+      &:hover {
+        background-color: rgba(#0B57D0, .55);
+
+        .dots {
+
+          circle {
+            fill: var(--white);
+          }
+        }
+      }
+    }
+  }
+
+  &_dropdown {
+    position        : absolute;
+    top             : 100%;
+    right           : 0;
+    padding         : var(--bv) calc(var(--bv) * 2);
+    background-color: var(--white);
+    border-radius   : calc(var(--bv) * 2);
+    box-shadow: rgba(0,0,0,0.2) 0px 12px 28px 0px,rgba(0,0,0,0.1) 0px 2px 4px 0px,hsla(0,0%,100%,0.5) 0px 0px 0px 1px inset;
+    z-index         : v.zIndex('max');
+
+    &.show {
+
+      &::before {
+        content : "";
+        position: absolute;
+        top     : 0;
+        left    : 0;
+        width   : 100vw;
+        height  : 100vh;
+        z-index : v.zIndex('overlay');
+      }
+    }
+
+    &_item {
+      padding    : var(--bv);
+      display    : flex;
+      align-items: center;
+      font-size  : v.clampFunc(13.5, 14, 15, 1480);
+      gap        : 0 var(--bv);
+
+      svg {
+        width : 20px;
+        height: 20px;
+      }
     }
   }
 

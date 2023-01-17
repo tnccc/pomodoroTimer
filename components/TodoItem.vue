@@ -23,20 +23,20 @@
           :class="$style.item_btn"
           @click="editStart"
         >
-          <img src="@/assets/images/task_edit.svg" alt="taskedit">
+          <TaskEdit />
         </button>
         <button
           v-if="editMode"
           @click=""
           :class="$style.item_btn"
         >
-          <img src="@/assets/images/task_save.svg" alt="taskSave">
+          <TaskSave />
         </button>
         <button
           @click="deleteButtonClick"
           :class="$style.item_btn"
         >
-          <img src="@/assets/images/task_delete.svg" alt="taskdelete">
+          <TaskDelete />
         </button>
       </div>
     </div>
@@ -44,9 +44,17 @@
 </template>
 
 <script>
+import TaskEdit from '@/assets/images/task_edit.svg'
+import TaskSave from '@/assets/images/task_save.svg'
+import TaskDelete from '@/assets/images/task_delete.svg'
 
 export default {
   name: 'TodoItem',
+  components: {
+    TaskEdit,
+    TaskSave,
+    TaskDelete,
+  },
   data() {
     return {
       todoMessage          : '',
@@ -69,7 +77,6 @@ export default {
       this.editMode = true
     },
     editEnd(e) {
-      //TodoItem内でエンター押下時(IME確定時)にdisabledの処理を変更
       if(e.keyCode === 13) {
         this.editAble = false
         this.editMode = false
@@ -80,7 +87,6 @@ export default {
       // TODO:ここは佐藤と一緒にやりましょう(Editの保存は少し複雑なので)
     },
     deleteButtonClick() {
-      // TODO:emitの引数にはthis.todoを突っ込みましょう
       this.$emit('deleteButtonClick', this.todo)
     },
   },
