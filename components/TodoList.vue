@@ -3,10 +3,10 @@
     :class="$style.container"
   >
     <TodoItem 
-      @editButton="editButtonClick"
       v-for="(todo, index) in todos"
       :key="index"
       :todo="todo"
+      @deleteButtonClick="deleteTodo"
     />
   </div>
 </template>
@@ -15,12 +15,6 @@
 
 export default {
   name: 'TodoList',
-  data() {
-    return {
-      taskNumber: [],
-      isDisabled: true,
-    }
-  },
   props: {
     todos: {
       required: true,
@@ -28,8 +22,8 @@ export default {
     },
   },
   methods: {
-    editButtonClick(index) {
-      this.$emit('editButtonClick', index)
+    deleteTodo(todo) {
+      this.$emit('deleteTodoStart', todo)
     },
   },
 }

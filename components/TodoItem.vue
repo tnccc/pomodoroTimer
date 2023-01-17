@@ -10,7 +10,8 @@
       />
       <textarea
         v-model="todoMessage"
-        :disabled="!editable"
+        @keydown="editEnd"
+        :disabled="!editAble"
         :class="$style.item_text"
       >
       </textarea>
@@ -22,19 +23,20 @@
           :class="$style.item_btn"
           @click="editStart"
         >
-          <img src="@/assets/images/task_edit.svg" alt="taskedit">
+          <TaskEdit />
         </button>
         <button
           v-if="editMode"
+          @click=""
           :class="$style.item_btn"
-          @click="editStart"
         >
-          <img src="@/assets/images/task_save.svg" alt="taskSave">
+          <TaskSave />
         </button>
         <button
+          @click="deleteButtonClick"
           :class="$style.item_btn"
         >
-          <img src="@/assets/images/task_delete.svg" alt="taskdelete">
+          <TaskDelete />
         </button>
       </div>
     </div>
@@ -42,14 +44,22 @@
 </template>
 
 <script>
+import TaskEdit from '@/assets/images/task_edit.svg'
+import TaskSave from '@/assets/images/task_save.svg'
+import TaskDelete from '@/assets/images/task_delete.svg'
 
 export default {
   name: 'TodoItem',
+  components: {
+    TaskEdit,
+    TaskSave,
+    TaskDelete,
+  },
   data() {
     return {
-      todoMessage: '',
-      editAble: false,
-      editMode: false,
+      todoMessage          : '',
+      editAble             : false,
+      editMode             : false,
     }
   },
   created() {
@@ -62,24 +72,22 @@ export default {
     },
   },
   methods: {
-    // editButton(index, text) {
-    //   text = this.todos[index].task
-    //   this.$emit('editButton', index)
-    // },
     editStart() {
       this.editAble = true
       this.editMode = true
     },
-    editEnd() {
-      console.log('keydown enter!!!')
-      this.editable = false
+    editEnd(e) {
+      if(e.keyCode === 13) {
+        this.editAble = false
+        this.editMode = false
+        return
+      }
     },
     save() {
       // TODO:ここは佐藤と一緒にやりましょう(Editの保存は少し複雑なので)
     },
     deleteButtonClick() {
-      // TODO:emitの引数にはthis.todoを突っ込みましょう
-      this.$emit('deleteButtonClick')
+      this.$emit('deleteButtonClick', this.todo)
     },
   },
 }
