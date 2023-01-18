@@ -33,12 +33,12 @@
                 :class="$style.todo_heading_button"
               >
                 <TaskDots 
-                  @click="todoDropdownOpen = !todoDropdownOpen"
+                  @click="isDropdownVisible = !isDropdownVisible"
                   :class="$style.dots"
                 />
               </button>
               <div
-                v-if="todoDropdownOpen"
+                v-show="isDropdownVisible"
                 :class="$style.todo_dropdown"
               >
                 <div
@@ -114,7 +114,7 @@ export default {
   data() {
     return {
       todoAddMode: false,
-      todoDropdownOpen: false,
+      isDropdownVisible: false,
       text       : '',
     }
   },
