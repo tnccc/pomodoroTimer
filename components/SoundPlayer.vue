@@ -29,9 +29,10 @@
           <bgmNext />
         </button>
         <button
-          :class="$style.button"
+          :class="[$style.button, $style.flex]"
         >
           <bgmVolume />
+          <input type="range">
         </button>
       </div>
     </div>
@@ -83,6 +84,12 @@ export default {
 }
 
 .button {
+
+  &.flex {
+    display    : flex;
+    align-items: center;
+    gap        : 0 var(--bv);
+  }
 
   svg {
     width : 1.8rem;

@@ -50,12 +50,6 @@
                 <div
                   :class="$style.todo_dropdown_item"
                 >
-                  <TaskDelete />  
-                  タスクを削除する
-                </div>
-                <div
-                  :class="$style.todo_dropdown_item"
-                >
                   <TaskDelete />
                   完了したタスクを削除する
                 </div>
@@ -68,7 +62,8 @@
                 :class="$style.todo_list_container"
               >
                 <TodoList 
-                  @deleteTodoStart="deleteTodoStart"
+                  @overWriteTodo="overWriteTodo"
+                  @deleteTodo="deleteTodo"
                   :todos="todos"
                 />
               </div>
@@ -126,6 +121,7 @@ export default {
   methods: {
     ...mapActions({
       addTodoItem: 'todo/add',
+      overWrite: 'todo/overWrite',
       deleteItem: 'todo/delete'
     }),
     addTodo(text) {
@@ -138,7 +134,10 @@ export default {
         this.todoAddMode = false
       }
     },
-    deleteTodoStart(todo) {
+    overWriteTodo(todo) {
+      this.overWrite(todo);
+    },
+    deleteTodo(todo) {
       const result = window.confirm('タスクを削除しますか？')
       result ? this.deleteItem(todo) : ''
     },
