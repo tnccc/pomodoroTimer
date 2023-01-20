@@ -6,7 +6,8 @@
       v-for="(todo, index) in todos"
       :key="index"
       :todo="todo"
-      @deleteButtonClick="deleteTodo"
+      @overWrite="overWriteTodo"
+      @delete="deleteTodo"
     />
   </div>
 </template>
@@ -22,8 +23,11 @@ export default {
     },
   },
   methods: {
+    overWriteTodo(todo) {
+      this.$emit('overWriteTodo', todo)
+    },
     deleteTodo(todo) {
-      this.$emit('deleteTodoStart', todo)
+      this.$emit('deleteTodo', todo)
     },
   },
 }

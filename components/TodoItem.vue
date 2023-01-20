@@ -6,7 +6,8 @@
       :class="$style.item"
     >
       <button
-        :class="$style.item_circle"
+        @click="doneToggle"
+        :class="[{ done: isDone }, $style.item_circle ]"
       />
       <textarea
         v-model="todoMessage"
@@ -27,7 +28,7 @@
         </button>
         <button
           v-if="editMode"
-          @click=""
+          @click="overWrite"
           :class="$style.item_btn"
         >
           <TaskSave />
@@ -71,6 +72,11 @@ export default {
       type    : Object,
     },
   },
+  computed: {
+    isDone() {
+      return this.todo.done
+    },
+  },
   methods: {
     editStart() {
       this.editAble = true
@@ -80,14 +86,29 @@ export default {
       if(e.keyCode === 13) {
         this.editAble = false
         this.editMode = false
+        this.overWrite();
         return
       }
     },
-    save() {
+    overWrite() {
       // TODO:ここは佐藤と一緒にやりましょう(Editの保存は少し複雑なので)
+      const newTodo = {
+        ...this.todo,
+        task: this.todoMessage,
+      }
+      this.$emit('overWrite', newTodo);
     },
     deleteButtonClick() {
-      this.$emit('deleteButtonClick', this.todo)
+      this.$emit('delete', this.todo)
+    },
+    doneToggle() {
+      // console.log('called doneToggle!!!!!!!!')
+      const newTodo = {
+        ...this.todo,
+        done: !this.todo.done,
+      }
+      console.log('called doneToggle!!!!!!!!', newTodo)
+      this.$emit('overWrite', newTodo);
     },
   },
 }
