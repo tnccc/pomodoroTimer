@@ -11,7 +11,6 @@ export const mutations = {
         const index = state.todos.findIndex(todo => todo.id === newTodo.id)
         newTodos[index] = newTodo
         state.todos = newTodos
-            // state.todos.splice(index, 1, newTodo)
     },
     deleteItem(state, todo) {
         state.todos.splice(todo, 1)
@@ -33,7 +32,6 @@ export const actions = {
         commit('setItem', todo)
     },
     overWrite({ commit }, todo) {
-        console.log('called overwrite', todo);
         commit('overWrite', todo)
     },
     delete({ commit }, todo) {

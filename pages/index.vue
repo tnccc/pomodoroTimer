@@ -26,7 +26,7 @@
               >
                 Tasks
               <span :class="$style.num">
-                {{ todos.length  }}
+                {{ filteredTodos.length  }}
               </span>
               </h2>
               <button
@@ -41,18 +41,20 @@
                 v-show="isDropdownVisible"
                 :class="$style.todo_dropdown"
               >
-                <div
+                <button
+                  @click="isHideCompletedTasks = !isHideCompletedTasks"
                   :class="$style.todo_dropdown_item"
                 >
                   <TaskHide />
-                  完了したタスクを非表示にする
-                </div>
-                <div
+                  <span v-show="!isHideCompletedTasks">完了したタスクを非表示にする</span>
+                  <span v-show="isHideCompletedTasks">完了したタスクを表示する</span>
+                </button>
+                <button
                   :class="$style.todo_dropdown_item"
                 >
                   <TaskDelete />
-                  完了したタスクを削除する
-                </div>
+                  <span>完了したタスクを削除する</span>
+                </button>
               </div>
             </div>
             <div
@@ -64,7 +66,7 @@
                 <TodoList 
                   @overWriteTodo="overWriteTodo"
                   @deleteTodo="deleteTodo"
-                  :todos="todos"
+                  :todos="filteredTodos"
                 />
               </div>
               <div>
@@ -76,7 +78,8 @@
                 />
                 <!-- タスク一覧下部に固定配置 -->
                 <button
-                  v-if="!todoAddMode" @click="startAddMode"
+                  v-if="!todoAddMode"
+                  @click="startAddMode"
                   :class="$style.todo_input"
                 > 
                   タスクを入力をしてください。
@@ -108,21 +111,30 @@ export default {
   },
   data() {
     return {
-      todoAddMode: false,
-      isDropdownVisible: false,
-      text       : '',
+      todoAddMode         : false,
+      isDropdownVisible   : false,
+      isHideCompletedTasks: false,
+      text                : '',
     }
   },
   computed: {
     ...mapGetters({
       todos: 'todo/todoList'
     }),
+    filteredTodos() {
+      const doneTodo = this.todos.filter((task) => task.done !== true)
+      if(this.isHideCompletedTasks) {
+        return doneTodo
+      } else {
+        return this.todos
+      }
+    },
   },
   methods: {
     ...mapActions({
       addTodoItem: 'todo/add',
+      deleteItem: 'todo/delete',
       overWrite: 'todo/overWrite',
-      deleteItem: 'todo/delete'
     }),
     addTodo(text) {
       this.text = text
@@ -248,9 +260,11 @@ export default {
     top             : 100%;
     right           : 0;
     padding         : var(--bv) calc(var(--bv) * 2);
+    max-width       : 254px;
+    width           : 100%;
     background-color: var(--white);
     border-radius   : calc(var(--bv) * 2);
-    box-shadow: rgba(0,0,0,0.2) 0px 12px 28px 0px,rgba(0,0,0,0.1) 0px 2px 4px 0px,hsla(0,0%,100%,0.5) 0px 0px 0px 1px inset;
+    box-shadow      : rgba(0,0,0,0.2) 0px 12px 28px 0px, rgba(0,0,0,0.1) 0px 2px 4px 0px, hsla(0,0%,100%,0.5) 0px 0px 0px 1px inset;
     z-index         : v.zIndex('contents');
 
     &.show {
@@ -272,6 +286,11 @@ export default {
       align-items: center;
       font-size  : v.clampFunc(13.5, 14, 15, 1480);
       gap        : 0 var(--bv);
+      transition : opacity .3s;
+
+      &:hover {
+        opacity: .6;
+      }
 
       svg {
         width : 20px;
