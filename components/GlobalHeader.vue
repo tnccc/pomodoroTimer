@@ -109,14 +109,14 @@ export default {
     display    : flex;
     align-items: center;
     gap        : 0 calc(var(--bv) / 2);
-    transition: opacity .2s;
+    transition: opacity .3s;
 
     svg {
       vertical-align: middle;
     }
 
     &:hover {
-      opacity: .5;
+      opacity: .6;
     }
   }
 

@@ -32,7 +32,6 @@ export const actions = {
         commit('setItem', todo)
     },
     overWrite({ commit }, todo) {
-        console.log('called overwrite', todo);
         commit('overWrite', todo)
     },
     delete({ commit }, todo) {
