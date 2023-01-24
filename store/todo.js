@@ -7,13 +7,16 @@ export const mutations = {
         state.todos.push(todo)
     },
     overWrite(state, newTodo) {
-        const newTodos = state.todos.map(todo => todo);
+        const newTodos = state.todos.map(todo => todo)
         const index = state.todos.findIndex(todo => todo.id === newTodo.id)
         newTodos[index] = newTodo
         state.todos = newTodos
     },
     deleteItem(state, todo) {
         state.todos.splice(todo, 1)
+    },
+    doneDelete(state) {
+        state.todos = state.todos.filter((todo) => !todo.done)
     }
 }
 
@@ -34,7 +37,8 @@ export const actions = {
     overWrite({ commit }, todo) {
         commit('overWrite', todo)
     },
-    delete({ commit }, todo) {
-        commit('deleteItem', todo)
+    doneDelete({commit}, todo) {
+        console.log('todo =>' ,todo)
+        commit('doneDelete', todo)
     }
 }

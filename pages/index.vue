@@ -26,7 +26,7 @@
               >
                 Tasks
               <span :class="$style.num">
-                {{ filteredTodos.length  }}
+                {{ todos.filter(todo => !todo.done).length }}
               </span>
               </h2>
               <button
@@ -50,6 +50,7 @@
                   <span v-show="isHideCompletedTasks">完了したタスクを表示する</span>
                 </button>
                 <button
+                  @click="doneDeleteTodo"
                   :class="$style.todo_dropdown_item"
                 >
                   <TaskDelete />
@@ -66,7 +67,7 @@
                 <TodoList 
                   @overWriteTodo="overWriteTodo"
                   @deleteTodo="deleteTodo"
-                  :todos="filteredTodos"
+                  :todos="isHideCompletedTasks ? filteredTodos : todos"
                 />
               </div>
               <div>
@@ -122,18 +123,14 @@ export default {
       todos: 'todo/todoList'
     }),
     filteredTodos() {
-      const doneTodo = this.todos.filter((task) => task.done !== true)
-      if(this.isHideCompletedTasks) {
-        return doneTodo
-      } else {
-        return this.todos
-      }
+      return this.isHideCompletedTasks ? this.todos.filter((todo) => !todo.done) : this.todos
     },
   },
   methods: {
     ...mapActions({
       addTodoItem: 'todo/add',
       deleteItem: 'todo/delete',
+      doneDelete: 'todo/doneDelete',
       overWrite: 'todo/overWrite',
     }),
     addTodo(text) {
@@ -147,11 +144,14 @@ export default {
       }
     },
     overWriteTodo(todo) {
-      this.overWrite(todo);
+      this.overWrite(todo)
     },
     deleteTodo(todo) {
       const result = window.confirm('タスクを削除しますか？')
       result ? this.deleteItem(todo) : ''
+    },
+    doneDeleteTodo(todo) {
+      this.doneDelete(todo)
     },
     cancelButtonClick() {
       this.todoAddMode = false
