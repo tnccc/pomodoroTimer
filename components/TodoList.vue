@@ -8,6 +8,7 @@
       :todo="todo"
       @overWrite="overWriteTodo"
       @delete="deleteTodo"
+      :class="[$style.item, todo.done === true ? $style.done : '']"
     />
   </div>
 </template>
@@ -40,7 +41,7 @@ export default {
 @use "@/assets/scss/mixin" as m;
 
 .container {
-  display: grid;
+  display            : grid;
   gap: calc(var(--bv) * 2) 0;
 }
 </style>
