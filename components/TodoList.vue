@@ -3,8 +3,8 @@
     :class="$style.container"
   >
     <TodoItem 
-      v-for="(todo, index) in todos"
-      :key="index"
+      v-for="(todo) in todos"
+      :key="todo.id"
       :todo="todo"
       @overWrite="overWriteTodo"
       @delete="deleteTodo"

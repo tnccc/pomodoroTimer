@@ -67,7 +67,7 @@
                 <TodoList 
                   @overWriteTodo="overWriteTodo"
                   @deleteTodo="deleteTodo"
-                  :todos="isHideCompletedTasks ? filteredTodos : todos"
+                  :todos="displayTodos"
                 />
               </div>
               <div>
@@ -122,8 +122,11 @@ export default {
     ...mapGetters({
       todos: 'todo/todoList'
     }),
-    filteredTodos() {
-      return this.isHideCompletedTasks ? this.todos.filter((todo) => !todo.done) : this.todos
+    displayTodos() {
+      if (this.isHideCompletedTasks) {
+        return this.todos.filter((todo) => !todo.done)
+      }
+      return this.todos;
     },
   },
   methods: {
@@ -144,6 +147,7 @@ export default {
       }
     },
     overWriteTodo(todo) {
+      console.log('=> overWriteTodo', todo);
       this.overWrite(todo)
     },
     deleteTodo(todo) {
@@ -151,7 +155,13 @@ export default {
       result ? this.deleteItem(todo) : ''
     },
     doneDeleteTodo(todo) {
-      this.doneDelete(todo)
+      const result = window.confirm('完了したタスクを削除しますか？')
+      if(result) {
+        this.doneDelete(todo)
+      } else {
+        this.todos
+        this.isDropdownVisible = false
+      }
     },
     cancelButtonClick() {
       this.todoAddMode = false
