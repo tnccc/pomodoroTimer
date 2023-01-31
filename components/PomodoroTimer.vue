@@ -90,6 +90,13 @@
         </button>
       </div>
     </div>
+    <div>
+      <!-- <input type="range" id="volume" name="volume"
+            min="1" max="100" v-model="time"/> -->
+      <input type="range" id="volume" name="volume"
+        min="1" max="100" @change="changeSettingTime"/>
+      <label for="volume">{{ time/60 }}min</label>
+    </div>
   </div>
 </template>
 
@@ -106,7 +113,7 @@ export default {
       },
       status: 0,
       reset: 0,
-      time: 10, //後にカスタムできる仕様に変更したい
+      time: 100, //後にカスタムできる仕様に変更したい
       pomodoro: 0,
       rest: 0,
       longrest: 0,
@@ -194,12 +201,16 @@ export default {
         this.count()
       }, 1000);
     },
+    // TODO?ここの引数にNEXT処理（statusに応じた）を関数で渡しては？
     countStop() { //statusが2の時に実行される、また1秒ごとに実行していた処理を止める
       clearInterval(this.counter); 
       this.min = this.countSegmentation(Math.floor(this.time / 60), 2)
       this.sec = this.countSegmentation(this.time % 60, 2)
       console.log(this.mode)
       console.log(this.status)
+    },
+    changeSettingTime(e) {
+      this.time = 60 * e.target.value;
     },
   },
 }
