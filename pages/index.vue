@@ -1,6 +1,7 @@
 <template>
   <div
     :class="$style.container"
+    @click="clickTest"
   >
     <GlobalHeader />
     <div
@@ -33,7 +34,7 @@
                 :class="$style.todo_heading_button"
               >
                 <TaskDots 
-                  @click="isDropdownVisible = !isDropdownVisible"
+                  @click.stop="isDropdownVisible = !isDropdownVisible"
                   :class="$style.dots"
                 />
               </button>
@@ -101,7 +102,7 @@
 import TaskDots from '@/assets/images/task_dots.svg'
 import TaskDelete from '@/assets/images/task_delete.svg'
 import TaskHide from '@/assets/images/task_hide.svg'
-import {mapActions, mapGetters} from 'vuex';
+import {mapActions, mapGetters} from 'vuex'
 
 export default {
   name: 'Top-Page',
@@ -126,7 +127,7 @@ export default {
       if (this.isHideCompletedTasks) {
         return this.todos.filter((todo) => !todo.done)
       }
-      return this.todos;
+      return this.todos
     },
   },
   methods: {
@@ -147,27 +148,30 @@ export default {
       }
     },
     overWriteTodo(todo) {
-      console.log('=> overWriteTodo', todo);
+      console.log('=> overWriteTodo', todo)
       this.overWrite(todo)
     },
     deleteTodo(todo) {
       const result = window.confirm('タスクを削除しますか？')
       result ? this.deleteItem(todo) : ''
     },
-    doneDeleteTodo(todo) {
+    doneDeleteTodo() {
       const result = window.confirm('完了したタスクを削除しますか？')
       if(result) {
-        this.doneDelete(todo)
-      } else {
-        this.todos
+        this.doneDelete()
         this.isDropdownVisible = false
-      }
+      } 
+      this.isDropdownVisible = false
     },
     cancelButtonClick() {
       this.todoAddMode = false
     },
     startAddMode() {
       this.todoAddMode = true
+    },
+    clickTest() {
+      console.log('=> clickTest')
+      this.isDropdownVisible = false;
     },
   },
 }

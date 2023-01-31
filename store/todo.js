@@ -16,8 +16,8 @@ export const mutations = {
     deleteItem(state, todo) {
         state.todos.splice(todo, 1)
     },
-    doneDelete(state) {
-        state.todos = state.todos.filter((todo) => todo.done === false)
+    allDoneDelete(state) {
+        state.isDoneTodos = []
     },
     addTodos(state, todo) {
         if (state.todos.find((item) => item.id === todo.id)) return
@@ -37,13 +37,17 @@ export const mutations = {
 
 export const getters = {
     isNotDoneTodos(state) {
-        return this.todos;
+        return state.todos
     },
     isDoneTodos(state) {
-        return state.isDoneTodos;
+        return state.isDoneTodos
     },
+    // TODO: state.todosをidでソートしたデータと、state.isDoneTodosをidでソートしたデータを結合して返す
     todoList(state) {
-        return state.todos.concat(state.isDoneTodos);
+        const sortedTodos = state.todos.map(todos => todos).sort((a, b) => a.id < b.id ? -1 : 1);
+        const sortedIsDoneTodos = state.isDoneTodos.map(todos => todos).sort((a, b) => a.id < b.id ? -1 : 1);
+
+        return sortedTodos.concat(sortedIsDoneTodos);
     },
     nextId(state) {
         return `id-${state.todos.length + state.isDoneTodos.length + 1}`
@@ -56,18 +60,21 @@ export const actions = {
         commit('setItem', todo)
     },
     overWrite({ commit }, todo) {
-        console.log('Store overWrite!!!!!', todo);
+        console.log('Store overWrite!!!!!', todo)
         if (todo.done) {
             commit('removeTodos', todo)
             commit('addIsDoneTodos', todo);
         } else {
             commit('removeIsDoneTodos', todo)
-            commit('addTodos', todo);
+            commit('addTodos', todo)
         }
-        // commit('overWrite', todo)
     },
-    doneDelete({ commit }, todo) {
-        console.log('todo =>', todo)
-        commit('doneDelete', todo)
+    delete({ commit }, todo) {
+        if (!todo.done) {
+            commit('removeTodos', todo)
+        }
+    },
+    doneDelete({ commit }) {
+        commit('allDoneDelete')
     }
 }
