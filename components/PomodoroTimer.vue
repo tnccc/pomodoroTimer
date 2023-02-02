@@ -378,6 +378,12 @@ export default {
         border-radius: 50%;
         z-index      : -1;
       }
+
+      &::after {
+        content: "";
+        stroke-dashoffset: 1px;
+        
+      }
     }
 
     &_start {

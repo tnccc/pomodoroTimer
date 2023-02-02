@@ -92,6 +92,46 @@
         </div>
       </div>
     </div>
+    <div
+      :class="$style.push"
+      >
+        <button
+          @click="pushWindow"
+          :class="$style.push_button"
+        >
+          push!!!
+        </button>
+        <div
+          v-if="isHidePushWindow"
+          :class="$style.window"
+        >
+          <div
+            :class="$style.window_container"
+          >
+            <div
+              :class="$style.window_image"
+            >
+              <PushTimer />
+              <div
+                :class="$style.window_image_heading"
+              >
+                <span>お知らせ</span>
+                <span>ポモドーロが終了しました。</span>
+                <span>Pomodoro TImer</span>
+              </div>
+            </div>
+            <div
+              :class="$style.window_contents"
+            >
+              <button
+                @click="isHidePushWindow = false"
+              >
+                ×
+              </button>
+            </div>
+          </div>
+        </div>
+    </div>
     <SoundPlayer
       :class="$style.sound"
     />
@@ -102,6 +142,7 @@
 import TaskDots from '@/assets/images/task_dots.svg'
 import TaskDelete from '@/assets/images/task_delete.svg'
 import TaskHide from '@/assets/images/task_hide.svg'
+import PushTimer from '@/assets/images/push_logo.svg'
 import {mapActions, mapGetters} from 'vuex'
 
 export default {
@@ -110,15 +151,22 @@ export default {
     TaskDots,
     TaskHide,
     TaskDelete,
+    PushTimer,
   },
   data() {
     return {
       todoAddMode         : false,
       isDropdownVisible   : false,
       isHideCompletedTasks: false,
+      isHidePushWindow    : false,
       text                : '',
     }
   },
+  // updated() {
+  //   setTimeout(() => {
+  //     this.isHidePushWindow = false
+  //   }, 2500)
+  // },
   computed: {
     ...mapGetters({
       todos: 'todo/todoList'
@@ -173,6 +221,9 @@ export default {
       console.log('=> clickTest')
       this.isDropdownVisible = false;
     },
+    pushWindow() {
+      this.isHidePushWindow = true
+    },
   },
 }
 </script>
@@ -184,15 +235,16 @@ export default {
 @use "@/assets/scss/mixin" as m;
 
 .container {
-  width           : 100%;
-  --bv            : .5rem;
-  --white         : #fff;
-  --black         : #202124;
-  --blue          : #0B57D0;
-  --gray          : #5F6368;
-  --light-gray    : #E2E8F0;
-  --dull-gray     : #CBD5E1;
-  --accent-color  : #0B57D0;
+  width         : 100%;
+  --bv          : .5rem;
+  --white       : #fff;
+  --black       : #202124;
+  --blue        : #0B57D0;
+  --gray        : #5F6368;
+  --light-gray  : #E2E8F0;
+  --dull-gray   : #CBD5E1;
+  --accent-color: #0B57D0;
+  --border-width: 0;
 }
 
 .contents {
@@ -355,5 +407,51 @@ export default {
   bottom  : 0;
   width   : 100%;
   z-index : v.zIndex('nav');
+}
+
+.push {
+  position: relative;
+
+  .window {
+    position: absolute;
+    right   : 0;
+    bottom  : 0;
+    border: solid 1px var(--dull-gray);
+
+    &_container {
+      padding: calc(var(--bv) * 2);
+      display: flex;
+      width: 420px;
+    }
+
+    &_image {
+        display: flex;
+        gap: 0 calc(var(--bv) * 2);
+        
+        svg {
+          width  : 80px;
+          height : 80px;
+        }
+
+        &_heading {
+
+          span {
+            display: block;
+
+            &:last-of-type {
+              font-size: 12px;
+              color: var(--dull-gray);
+            }
+          }
+        }
+    }
+    &_contents {
+      display        : flex;
+      align-items    : flex-start;
+      justify-content: flex-end;
+      flex           : 1 0 auto;
+
+    }
+  }
 }
 </style>
