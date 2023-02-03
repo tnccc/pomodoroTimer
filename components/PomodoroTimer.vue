@@ -18,12 +18,6 @@
         Rest
         <span :class="$style.num">{{ rest }}</span>
       </button>
-      <button
-        :class="[$style.button, $style.button_rest]"
-      >
-        Long Rest
-        <span :class="$style.num">{{ longrest }}</span>
-      </button>
     </div>
     <div
       :class="$style.timer"
@@ -31,6 +25,7 @@
       <div
         :class="$style.timer_container"
       >
+      <div><span @click="adjustmentTime(600)">▲</span><span @click="adjustmentTime(60)">▲</span></div>
         <div
           :class="$style.timer_count"
         >
@@ -38,31 +33,32 @@
             <span
               :class="$style.timer_min"
             >
-              {{ min }}
+              {{ displayMin }}
             </span>
             <span
               :class="$style.timer_sec"
             >
-              {{ sec }}
+              {{ displaySec }}
             </span>
           </div>
           <div :class="$style.timer_description">
             <div
-              v-for="item in items"
-              :key="item.id"
-              >
-                <p
-                  v-html="item.description"
-                  :class="$style.timer_quote"
-                ></p>
-                <p
-                  :class="$style.timer_name"
-                >
-                  {{ item.name }}
-                </p>
-            </div>
-          </div>
+            v-for="item in items"
+            :key="item.id"
+            >
+            <p
+            v-html="item.description"
+            :class="$style.timer_quote"
+            ></p>
+            <p
+            :class="$style.timer_name"
+            >
+            {{ item.name }}
+          </p>
         </div>
+      </div>
+    </div>
+    <div><span @click="adjustmentTime(-600)">▼</span><span @click="adjustmentTime(-60)">▼</span></div>
       </div>
       <div
         :class="$style.timer_start"
@@ -113,31 +109,6 @@
               <div
                 :class="$style.setting_timer_heading"
               >
-                作業時間（分:秒）
-              </div>
-              <div
-                :class="$style.setting_timer_item"
-              >
-                <input 
-                  v-model="time"
-                  type="text"
-                  name="text"
-                  value="25"
-                  maxlength="4"
-                >
-                <button
-                  :class="$style.setting_timer_button"
-                >
-                  <MenuTimer />
-                </button>
-              </div>
-            </div>
-            <div
-              :class="$style.setting_box"
-            >
-              <div
-                :class="$style.setting_timer_heading"
-              >
                 休憩時間（分:秒）
               </div>
               <div
@@ -180,11 +151,11 @@ export default {
       },
       status: 0,
       reset: 0,
-      time: 100, //後にカスタムできる仕様に変更したい
+      time: 300, //後にカスタムできる仕様に変更したい
       pomodoro: 0,
       rest: 0,
       longrest: 0,
-      counter: '',
+      intervalID: null,
       min: '00',
       sec: '00',
       items: [
@@ -205,7 +176,29 @@ export default {
   mounted() {
     console.log(this.mode)
   },
+  computed: {
+    displayMin() {
+      if (this.intervalID) {
+        return this.min.padStart(2, '0')
+      } else {
+        return Math.floor(this.time / 60).toString().padStart(2, '0')
+      }
+    },
+    displaySec() {
+      if (this.intervalID) {
+        return this.sec.padStart(2, '0')
+      } else {
+        return (this.time % 60).toString().padStart(2, '0')
+      }
+    },
+  },
   methods: {
+    adjustmentTime(time) {
+      if (this.time + time < 0 | this.time + time > 5999) {
+        return;
+      }
+      this.time += time
+    },
     countCheck() {
       if(this.status === 0) {
         this.status = 1
@@ -264,13 +257,13 @@ export default {
     countStart() { //statusがtrueの時に処理が実行される、また1秒ごとに関数が実行される
       this.min = this.countSegmentation(Math.floor(this.time / 60), 2)
       this.sec = this.countSegmentation(this.time % 60, 2)
-      this.counter = setInterval(() => {
+      this.intervalID = setInterval(() => {
         this.count()
       }, 1000);
     },
     // TODO?ここの引数にNEXT処理（statusに応じた）を関数で渡しては？
     countStop() { //statusが2の時に実行される、また1秒ごとに実行していた処理を止める
-      clearInterval(this.counter); 
+      clearInterval(this.intervalID); 
       this.min = this.countSegmentation(Math.floor(this.time / 60), 2)
       this.sec = this.countSegmentation(this.time % 60, 2)
       console.log(this.mode)

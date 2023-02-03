@@ -162,11 +162,11 @@ export default {
       text                : '',
     }
   },
-  // updated() {
-  //   setTimeout(() => {
-  //     this.isHidePushWindow = false
-  //   }, 2500)
-  // },
+  updated() {
+    setTimeout(() => {
+      this.isHidePushWindow = false
+    }, 2500)
+  },
   computed: {
     ...mapGetters({
       todos: 'todo/todoList'
