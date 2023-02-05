@@ -10,7 +10,7 @@
       <div
         :class="$style.contents_grid"
       >
-        <PomodoroTimer 
+        <TimerManager
           :class="$style.timer"
         />
         <div
@@ -243,7 +243,7 @@ export default {
   --gray        : #5F6368;
   --light-gray  : #E2E8F0;
   --dull-gray   : #CBD5E1;
-  --accent-color: #0B57D0;
+  --green       : #059669;
   --border-width: 0;
 }
 

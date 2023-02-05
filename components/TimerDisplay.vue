@@ -3,23 +3,6 @@
     :class="$style.container"
   >
     <div
-      :class="$style.button_container"
-    >
-      <button
-        @click="countCheck"
-        :class="[$style.button, $style.button_pomodoro, $style.current]"
-      >
-        Pomodoro
-        <span :class="$style.num">{{ pomodoro }}</span>
-      </button>
-      <button
-        :class="[$style.button, $style.button_rest]"
-      >
-        Rest
-        <span :class="$style.num">{{ rest }}</span>
-      </button>
-    </div>
-    <div
       :class="$style.timer"
     >
       <div
@@ -60,31 +43,6 @@
     </div>
     <div><span @click="adjustmentTime(-600)">▼</span><span @click="adjustmentTime(-60)">▼</span></div>
       </div>
-      <div
-        :class="$style.timer_start"
-      >
-        <button
-          @click="countCheck"
-          type="button"
-          :class="[$style.timer_start_button, status === 4 || status === 5 && mode === 'rest' ? $style.rest : '']"
-        >
-          <span
-            v-if="mode === 'work' || status === 5 && mode === 'rest'"
-          >
-            STOP
-          </span>
-          <span
-            v-else-if="mode === 'rest'"
-          >
-            REST
-          </span>
-          <span
-            v-else
-          >
-            START
-          </span>
-        </button>
-      </div>
       <div>
         <!-- <input type="range" id="volume" name="volume"
         min="1" max="100" v-model="time"/> -->
@@ -97,7 +55,7 @@
           max="100" 
         /> -->
         <!-- <label for="volume">{{ time/60 }}min</label> -->
-        <div
+        <!-- <div
           :class="$style.setting"
         >
           <div
@@ -127,7 +85,7 @@
               </div>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -137,7 +95,7 @@
 import MenuTimer from '@/assets/images/timer.svg'
 
 export default {
-  name: 'PomodoroTimer',
+  name: 'Pomodoro',
   components: {
     MenuTimer,
   },
@@ -158,23 +116,7 @@ export default {
       intervalID: null,
       min: '00',
       sec: '00',
-      items: [
-        {
-          id: 1,
-          description: `挫折を経験したことが無い者は、何も新しい事に<br>
-          挑戦したことが無いということだ`,
-          name: 'アインシュタイン （1879～1955）'
-        },
-        // {
-        //   id: 2,
-        //   description: `とにかく、考えてみることである。工夫してみることである。<br>そして、やってみることである。失敗すればやり直せばいい`,
-        //   name: '松下幸之助（1894～1989）'
-        // },
-      ],
     }
-  },
-  mounted() {
-    console.log(this.mode)
   },
   computed: {
     displayMin() {
@@ -284,69 +226,8 @@ export default {
 @use "@/assets/scss/mixin" as m;
 .container {
 
-  .button {
-    position   : relative;
-    font-size  : calc(var(--bv) * 2);
-    font-family: f.family('english');
-    background : none;
-
-    &::before {
-      content         : "";
-      position        : absolute;
-      top             : 0;
-      left            : -25px;
-      width           : calc(100% + 50px);
-      height          : 100%;
-      background-color: rgba(211, 227, 253, 0.55);
-      border-radius: 5px 5px 0 0;
-      opacity         : 0;
-      transition      : opacity .2s;
-      z-index         : -1;
-    }
-
-    &:hover {
-
-      &::before {
-        opacity: 1;
-      }
-    }
-
-    &.current {
-      
-      &::after {
-        content         : "";
-        position        : relative;
-        right           : 25px;
-        margin-top      : 2px;
-        display         : block;
-        width           : calc(100% + 50px);
-        height          : 1px;
-        background-color: #64748B;
-      }
-    }
-
-    &_container {
-      display        : flex;
-      justify-content: center;
-      gap            : 0 calc(var(--bv) * 7);
-    }
-
-    .num {
-      font-weight: bolder;
-    }
-
-    &_pomodoro {
-      color: c.$accentColor;
-    }
-
-    &_rest {
-      color: c.$mainGreen;
-    }
-  }
-
   .timer {
     margin-top: calc(var(--bv) * 4.5);
-    height    : 100vh;
     
     &_container {
       position        : relative;
@@ -376,24 +257,6 @@ export default {
         content: "";
         stroke-dashoffset: 1px;
         
-      }
-    }
-
-    &_start {
-      display: flex;
-      justify-content: center;
-
-      button {
-        @include m.component_button(22.5rem, 60px, 20px, c.$accentColor);
-        margin-top : calc(var(--bv) * 4);
-        padding    : calc(var(--bv) * 3);
-        font-size  : calc(var(--bv) * 2.5);
-        font-weight: bold;
-        box-shadow : 0 4px 4px 2px rgba($color: #000000, $alpha: .08);
-
-        &.rest {
-        @include m.component_button(22.5rem, 60px, 20px, c.$mainGreen);
-      }
       }
     }
 
