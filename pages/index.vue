@@ -1,7 +1,7 @@
 <template>
   <div
     :class="$style.container"
-    @click="clickTest"
+    @click="hideDropdown"
   >
     <GlobalHeader />
     <div
@@ -217,8 +217,7 @@ export default {
     startAddMode() {
       this.todoAddMode = true
     },
-    clickTest() {
-      console.log('=> clickTest')
+    hideDropdown() {
       this.isDropdownVisible = false;
     },
     pushWindow() {

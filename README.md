@@ -1,6 +1,4 @@
-# pomodoroTimer_dev
-
-## はじめに
+# はじめに。
 Vue.js / Nuxt.jsを使用しています。
 
 ## セットアップ

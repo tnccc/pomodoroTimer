@@ -4,7 +4,7 @@
   >
     <div
       :class="$style.timer"
-    >
+    > 
       <div
         :class="$style.timer_container"
       >
@@ -26,18 +26,17 @@
           </div>
           <div :class="$style.timer_description">
             <div
-            v-for="item in items"
-            :key="item.id"
             >
-            <p
-            v-html="item.description"
-            :class="$style.timer_quote"
-            ></p>
-            <p
-            :class="$style.timer_name"
-            >
-            {{ item.name }}
-          </p>
+              <p
+                v-html="adage.description"
+                :class="$style.timer_quote"
+              >
+              </p>
+              <p
+                :class="$style.timer_name"
+              >
+                {{ adage.name }}
+              </p>
         </div>
       </div>
     </div>
@@ -95,7 +94,7 @@
 import MenuTimer from '@/assets/images/timer.svg'
 
 export default {
-  name: 'Pomodoro',
+  name: 'TimerDisplay',
   components: {
     MenuTimer,
   },
@@ -117,6 +116,12 @@ export default {
       min: '00',
       sec: '00',
     }
+  },
+  props: {
+    adage: {
+      required: true,
+      type: Object,
+    },
   },
   computed: {
     displayMin() {
