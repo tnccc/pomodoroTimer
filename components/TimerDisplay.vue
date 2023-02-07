@@ -8,6 +8,7 @@
       <div
         :class="$style.timer_container"
       >
+      {{ mode }}
       <div><span @click="adjustmentTime(600)">▲</span><span @click="adjustmentTime(60)">▲</span></div>
         <div
           :class="$style.timer_count"
@@ -100,12 +101,6 @@ export default {
   },
   data() {
     return { 
-      mode: {
-        default: 'default',
-        work:  'work',
-        stop: 'stop',
-        rest: 'rest',
-      },
       status: 0,
       reset: 0,
       time: 300, //後にカスタムできる仕様に変更したい
@@ -113,14 +108,19 @@ export default {
       rest: 0,
       longrest: 0,
       intervalID: null,
-      min: '00',
-      sec: '00',
+      min: 0,
+      sec: 0,
     }
   },
   props: {
     adage: {
       required: true,
       type: Object,
+    },
+    mode: {
+      required: false,
+      type: String,
+      default: '',
     },
   },
   computed: {
@@ -146,80 +146,83 @@ export default {
       }
       this.time += time
     },
-    countCheck() {
-      if(this.status === 0) {
-        this.status = 1
-
-        if(this.status === 1) {
-          this.mode = 'work'
-          this.status = 2
-          console.log(this.mode)
-          this.countStart()
-        } 
-      } else if (this.status === 2 && this.mode === 'work') {
-        this.mode = 'stop'
-        this.status = 0
-        this.countStop()
-      } else if (this.status === 0 && this.mode === 'stop') {
-        this.mode = 'work'
-        this.status = 1
-      } else if (this.status === 4) {
-        this.mode = 'rest'
-        this.status = 5
-        console.log(this.mode)
-        console.log(this.status)
-        this.countStart()
-      }  else if(this.status === 5 && this.mode === 'rest') {
-        this.status = 4
-        this.countStop()
-      }
-    },
-    countSegmentation(num, length) {
-      return ('00' + num).slice(-length)
-    },
     count() {
-      if(this.time === 0 && this.mode === 'work') {
-        this.min = 0;
-        this.sec = 0;
-        this.status = 4
-        this.mode = 'rest' 
-        this.time = 10
-        this.pomodoro++
-        this.countStop()
-      } else if(this.time === 0 && this.status === 5 && this.mode === 'rest') {
-        this.min = 0;
-        this.sec = 0;
-        this.status = 0
-        this.mode = 'default' 
-        this.time = 10
-        this.rest++
-        this.countStop()
-      }
-      else {
-        this.time -= 1;
-        this.min = this.countSegmentation(Math.floor(this.time / 60), 2)
-        this.sec = this.countSegmentation(this.time % 60, 2)
-      }
+
     },
-    countStart() { //statusがtrueの時に処理が実行される、また1秒ごとに関数が実行される
-      this.min = this.countSegmentation(Math.floor(this.time / 60), 2)
-      this.sec = this.countSegmentation(this.time % 60, 2)
-      this.intervalID = setInterval(() => {
-        this.count()
-      }, 1000);
-    },
-    // TODO?ここの引数にNEXT処理（statusに応じた）を関数で渡しては？
-    countStop() { //statusが2の時に実行される、また1秒ごとに実行していた処理を止める
-      clearInterval(this.intervalID); 
-      this.min = this.countSegmentation(Math.floor(this.time / 60), 2)
-      this.sec = this.countSegmentation(this.time % 60, 2)
-      console.log(this.mode)
-      console.log(this.status)
-    },
-    changeSettingTime(e) {
-      console.log(e.target.value)
-      this.time = 60 * e.target.value;
-    },
+    // countCheck() {
+    //   if(this.status === 0) {
+    //     this.status = 1
+
+    //     if(this.status === 1) {
+    //       this.mode = 'work'
+    //       this.status = 2
+    //       console.log(this.mode)
+    //       this.countStart()
+    //     } 
+    //   } else if (this.status === 2 && this.mode === 'work') {
+    //     this.mode = 'stop'
+    //     this.status = 0
+    //     this.countStop()
+    //   } else if (this.status === 0 && this.mode === 'stop') {
+    //     this.mode = 'work'
+    //     this.status = 1
+    //   } else if (this.status === 4) {
+    //     this.mode = 'rest'
+    //     this.status = 5
+    //     console.log(this.mode)
+    //     console.log(this.status)
+    //     this.countStart()
+    //   }  else if(this.status === 5 && this.mode === 'rest') {
+    //     this.status = 4
+    //     this.countStop()
+    //   }
+    // },
+    // countSegmentation(num, length) {
+    //   return ('00' + num).slice(-length)
+    // },
+    // count() {
+    //   if(this.time === 0 && this.mode === 'work') {
+    //     this.min = 0;
+    //     this.sec = 0;
+    //     this.status = 4
+    //     this.mode = 'rest' 
+    //     this.time = 10
+    //     this.pomodoro++
+    //     this.countStop()
+    //   } else if(this.time === 0 && this.status === 5 && this.mode === 'rest') {
+    //     this.min = 0;
+    //     this.sec = 0;
+    //     this.status = 0
+    //     this.mode = 'default' 
+    //     this.time = 10
+    //     this.rest++
+    //     this.countStop()
+    //   }
+    //   else {
+    //     this.time -= 1;
+    //     this.min = this.countSegmentation(Math.floor(this.time / 60), 2)
+    //     this.sec = this.countSegmentation(this.time % 60, 2)
+    //   }
+    // },
+    // countStart() { //statusがtrueの時に処理が実行される、また1秒ごとに関数が実行される
+    //   this.min = this.countSegmentation(Math.floor(this.time / 60), 2)
+    //   this.sec = this.countSegmentation(this.time % 60, 2)
+    //   this.intervalID = setInterval(() => {
+    //     this.count()
+    //   }, 1000);
+    // },
+    // // TODO?ここの引数にNEXT処理（statusに応じた）を関数で渡しては？
+    // countStop() { //statusが2の時に実行される、また1秒ごとに実行していた処理を止める
+    //   clearInterval(this.intervalID); 
+    //   this.min = this.countSegmentation(Math.floor(this.time / 60), 2)
+    //   this.sec = this.countSegmentation(this.time % 60, 2)
+    //   console.log(this.mode)
+    //   console.log(this.status)
+    // },
+    // changeSettingTime(e) {
+    //   console.log(e.target.value)
+    //   this.time = 60 * e.target.value;
+    // },
   },
 }
 </script>

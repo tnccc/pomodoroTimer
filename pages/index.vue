@@ -257,7 +257,7 @@ export default {
 
 .timer {
   flex  : 1 0 auto;
-  height: calc(100vh - 45px);
+  // height: calc(100vh - 45px);
 }
 
 .todo {
@@ -418,9 +418,10 @@ export default {
     border: solid 1px var(--dull-gray);
 
     &_container {
-      padding: calc(var(--bv) * 2);
-      display: flex;
-      width: 420px;
+      padding         : calc(var(--bv) * 2);
+      display         : flex;
+      width           : 420px;
+      background-color: var(--white);
     }
 
     &_image {

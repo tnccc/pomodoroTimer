@@ -32,6 +32,7 @@
     <div>
       <TimerDisplay 
         :adage="randomAdageList"
+        :mode="modeStatus"
       />
     </div>
     <div
@@ -69,14 +70,16 @@ export default {
   data() {
     return  {
       intervalId: null,
-      timer: 0,
+      timer     : 0,
       mode: {
         start: 'start',
         stop : 'stop',
         rest : 'rest',
       },
       pomodoro: 0,
-      rest: 0,
+      rest    : 0,
+      min     : 0,
+      sec     : 0,
       adage: [
         {
           id: 1,
@@ -107,7 +110,7 @@ export default {
       ],
     }
   },
-  mounted() {
+  created() {
     this.mode = 'stop'
   },
   computed: {
@@ -117,6 +120,20 @@ export default {
     },
     modeStatus() {
       return this.mode
+    },
+    displayMin() {
+      if (this.intervalID) {
+        return this.min.padStart(2, '0')
+      } else {
+        return Math.floor(this.time / 60).toString().padStart(2, '0')
+      }
+    },
+    displaySec() {
+      if (this.intervalID) {
+        return this.sec.padStart(2, '0')
+      } else {
+        return (this.time % 60).toString().padStart(2, '0')
+      }
     },
   },
   methods: {
