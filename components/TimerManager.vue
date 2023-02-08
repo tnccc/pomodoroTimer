@@ -3,6 +3,7 @@
   <!-- TODO: Start・STOPのボタンもこっちに移す -->
   <!-- TODO: MODE/status はこっちで管理する -->
   <!-- TODO: 格言のデータ管理もこっち。格言はpropsで渡す -->
+  <!-- 各タイマーの状態はmanager管理のイメージです。（どのモードで動いてるとか、動いてる、止まってる等） -->
   <div
     :class="$style.container"
   >
@@ -32,7 +33,8 @@
     <div>
       <TimerDisplay 
         :adage="randomAdageList"
-        :mode="modeStatus"
+        :intervalId="intervalId"
+        :mode="mode"
       />
     </div>
     <div
@@ -70,7 +72,6 @@ export default {
   data() {
     return  {
       intervalId: null,
-      timer     : 0,
       mode: {
         start: 'start',
         stop : 'stop',
@@ -78,8 +79,6 @@ export default {
       },
       pomodoro: 0,
       rest    : 0,
-      min     : 0,
-      sec     : 0,
       adage: [
         {
           id: 1,
@@ -121,26 +120,11 @@ export default {
     modeStatus() {
       return this.mode
     },
-    displayMin() {
-      if (this.intervalID) {
-        return this.min.padStart(2, '0')
-      } else {
-        return Math.floor(this.time / 60).toString().padStart(2, '0')
-      }
-    },
-    displaySec() {
-      if (this.intervalID) {
-        return this.sec.padStart(2, '0')
-      } else {
-        return (this.time % 60).toString().padStart(2, '0')
-      }
-    },
   },
   methods: {
     startTimer() {
       this.intervalId = setInterval(() => {
         this.mode = 'start'
-        console.log(this.intervalId, this.mode)
       })
     },
     stopTimer() {

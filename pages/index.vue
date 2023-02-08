@@ -8,6 +8,46 @@
       :class="$style.contents"
     >
       <div
+        :class="$style.push"
+      >
+        <button
+          @click="pushWindow"
+          :class="$style.push_button"
+        >
+          push!!!
+        </button>
+        <div
+          v-if="isHidePushWindow"
+          :class="$style.window"
+        >
+          <div
+            :class="$style.window_container"
+          >
+            <div
+              :class="$style.window_image"
+            >
+              <PushTimer />
+              <div
+                :class="$style.window_image_heading"
+              >
+                <span>お知らせ</span>
+                <span>ポモドーロが終了しました。</span>
+                <span>Pomodoro TImer</span>
+              </div>
+            </div>
+            <div
+              :class="$style.window_contents"
+            >
+              <button
+                @click="isHidePushWindow = false"
+              >
+                ×
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
         :class="$style.contents_grid"
       >
         <TimerManager
@@ -91,46 +131,6 @@
           </div>
         </div>
       </div>
-    </div>
-    <div
-      :class="$style.push"
-      >
-        <button
-          @click="pushWindow"
-          :class="$style.push_button"
-        >
-          push!!!
-        </button>
-        <div
-          v-if="isHidePushWindow"
-          :class="$style.window"
-        >
-          <div
-            :class="$style.window_container"
-          >
-            <div
-              :class="$style.window_image"
-            >
-              <PushTimer />
-              <div
-                :class="$style.window_image_heading"
-              >
-                <span>お知らせ</span>
-                <span>ポモドーロが終了しました。</span>
-                <span>Pomodoro TImer</span>
-              </div>
-            </div>
-            <div
-              :class="$style.window_contents"
-            >
-              <button
-                @click="isHidePushWindow = false"
-              >
-                ×
-              </button>
-            </div>
-          </div>
-        </div>
     </div>
     <SoundPlayer
       :class="$style.sound"
@@ -257,7 +257,7 @@ export default {
 
 .timer {
   flex  : 1 0 auto;
-  // height: calc(100vh - 45px);
+  height: calc(100vh - 45px);
 }
 
 .todo {

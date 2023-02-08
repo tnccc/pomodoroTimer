@@ -38,10 +38,10 @@
               >
                 {{ adage.name }}
               </p>
-        </div>
+            </div>
+          </div>
       </div>
-    </div>
-    <div><span @click="adjustmentTime(-600)">▼</span><span @click="adjustmentTime(-60)">▼</span></div>
+        <div><span @click="adjustmentTime(-600)">▼</span><span @click="adjustmentTime(-60)">▼</span></div>
       </div>
       <div>
         <!-- <input type="range" id="volume" name="volume"
@@ -107,7 +107,7 @@ export default {
       pomodoro: 0,
       rest: 0,
       longrest: 0,
-      intervalID: null,
+      // intervalId: null,
       min: 0,
       sec: 0,
     }
@@ -122,18 +122,28 @@ export default {
       type: String,
       default: '',
     },
+    intervalId: {
+      required: false,
+      type: Number,
+      default: null,
+    },
+  },
+  watch: {
+    mode() {
+      this.countStart()
+    },
   },
   computed: {
     displayMin() {
-      if (this.intervalID) {
-        return this.min.padStart(2, '0')
+      if (this.intervalId) {
+        return this.min.toString().padStart(2, 0)
       } else {
-        return Math.floor(this.time / 60).toString().padStart(2, '0')
+        return Math.floor(this.time / 60).toString().padStart(2, 0)
       }
     },
     displaySec() {
-      if (this.intervalID) {
-        return this.sec.padStart(2, '0')
+      if (this.intervalId) {
+        return this.sec.toString().padStart(2, '0')
       } else {
         return (this.time % 60).toString().padStart(2, '0')
       }
@@ -146,8 +156,15 @@ export default {
       }
       this.time += time
     },
-    count() {
-
+    countStart() {
+      if(this.mode === 'start') {
+        console.log('countStart')
+        this.min = this.countSegmentation(Math.floor(this.time / 60), 2)
+        this.sec = this.countSegmentation(this.time % 60, 2)
+      }
+    },
+    countSegmentation(num, length) {
+      return ('00' + num).slice(-length)
     },
     // countCheck() {
     //   if(this.status === 0) {
@@ -177,9 +194,6 @@ export default {
     //     this.countStop()
     //   }
     // },
-    // countSegmentation(num, length) {
-    //   return ('00' + num).slice(-length)
-    // },
     // count() {
     //   if(this.time === 0 && this.mode === 'work') {
     //     this.min = 0;
@@ -207,13 +221,13 @@ export default {
     // countStart() { //statusがtrueの時に処理が実行される、また1秒ごとに関数が実行される
     //   this.min = this.countSegmentation(Math.floor(this.time / 60), 2)
     //   this.sec = this.countSegmentation(this.time % 60, 2)
-    //   this.intervalID = setInterval(() => {
+    //   this.intervalId = setInterval(() => {
     //     this.count()
     //   }, 1000);
     // },
     // // TODO?ここの引数にNEXT処理（statusに応じた）を関数で渡しては？
     // countStop() { //statusが2の時に実行される、また1秒ごとに実行していた処理を止める
-    //   clearInterval(this.intervalID); 
+    //   clearInterval(this.intervalId); 
     //   this.min = this.countSegmentation(Math.floor(this.time / 60), 2)
     //   this.sec = this.countSegmentation(this.time % 60, 2)
     //   console.log(this.mode)
