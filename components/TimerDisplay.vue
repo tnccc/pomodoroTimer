@@ -8,11 +8,25 @@
       <div
         :class="$style.timer_container"
       >
-      {{ mode }}
-      <div><span @click="adjustmentTime(600)">▲</span><span @click="adjustmentTime(60)">▲</span></div>
         <div
           :class="$style.timer_count"
         >
+          <div
+            :class="$style.timer_count_adjust"
+          >
+            <div
+              :class="$style.timer_count_adjust_box"
+            >
+              <span @click="adjustmentTime(600)">▲</span>
+              <span @click="adjustmentTime(60)">▲</span>
+            </div>
+            <div
+              :class="$style.timer_count_adjust_box"
+            >
+              <span @click="adjustmentTime(-600)">▼</span>
+              <span @click="adjustmentTime(-60)">▼</span>
+            </div>
+          </div>
           <div :class="[$style.timer_count_num, status === 4 || status === 5 && mode === 'rest' ? $style.rest : '']">
             <span
               :class="$style.timer_min"
@@ -40,53 +54,9 @@
               </p>
             </div>
           </div>
+        </div>
       </div>
-        <div><span @click="adjustmentTime(-600)">▼</span><span @click="adjustmentTime(-60)">▼</span></div>
-      </div>
-      <div>
-        <!-- <input type="range" id="volume" name="volume"
-        min="1" max="100" v-model="time"/> -->
-        <!-- <input 
-          @change="changeSettingTime"
-          type="range" 
-          id="volume" 
-          name="volume"
-          min="1" 
-          max="100" 
-        /> -->
-        <!-- <label for="volume">{{ time/60 }}min</label> -->
-        <!-- <div
-          :class="$style.setting"
-        >
-          <div
-            :class="$style.setting_timer"
-          >
-            <div
-              :class="$style.setting_box"
-            >
-              <div
-                :class="$style.setting_timer_heading"
-              >
-                休憩時間（分:秒）
-              </div>
-              <div
-                :class="$style.setting_timer_item"
-              >
-                <input 
-                  v-model="rest"
-                  type="text"
-                  name="text"
-                >
-                <button
-                  :class="$style.setting_timer_button"
-                >
-                  <MenuTimer />
-                </button>
-              </div>
-            </div>
-          </div>
-        </div> -->
-      </div>
+      {{ mode }}
     </div>
   </div>
 </template>
@@ -102,12 +72,10 @@ export default {
   data() {
     return { 
       status: 0,
-      reset: 0,
-      time: 300, //後にカスタムできる仕様に変更したい
+      time: 300,
       pomodoro: 0,
-      rest: 0,
       longrest: 0,
-      // intervalId: null,
+      intervalId: null,
       min: 0,
       sec: 0,
     }
@@ -121,16 +89,6 @@ export default {
       required: false,
       type: String,
       default: '',
-    },
-    intervalId: {
-      required: false,
-      type: Number,
-      default: null,
-    },
-  },
-  watch: {
-    mode() {
-      this.countStart()
     },
   },
   computed: {
@@ -157,12 +115,26 @@ export default {
       this.time += time
     },
     countStart() {
+      console.log(this.mode)
       if(this.mode === 'start') {
-        console.log('countStart')
-        this.min = this.countSegmentation(Math.floor(this.time / 60), 2)
-        this.sec = this.countSegmentation(this.time % 60, 2)
+        console.log('発火')
+        this.intervalId = setInterval(() => {
+          this.time --
+          this.min = this.countSegmentation(Math.floor(this.time / 60), 2)
+          this.sec = this.countSegmentation(this.time % 60, 2)
+          if(this.time === 0) {
+            clearInterval(this.intervalId)
+          }
+        }, 1000)
       }
     },
+    // countStop() {
+    //   if(this.mode === 'stop') {
+    //     console.log('countStop')
+    //     this.min = this.countSegmentation(Math.floor(this.time / 60), 2)
+    //     this.sec = this.countSegmentation(this.time % 60, 2)
+    //   }
+    // },
     countSegmentation(num, length) {
       return ('00' + num).slice(-length)
     },
@@ -287,6 +259,14 @@ export default {
       font-weight    : bolder;
       color          : c.$blue;
 
+      &_adjust {
+        margin-top     : -2rem;
+        display        : flex;
+        font-size      : calc(var(--bv) * 2);
+        justify-content: center;
+        align-items    : center;
+      }
+
       &_num {
         display        : flex;
         max-height     : 136px;
@@ -313,11 +293,23 @@ export default {
     &_description {
       text-align: center;
 
+      > div {
+        margin        : 0 auto;
+        display       : flex;
+        flex-direction: column;
+        max-width     : 320px;
+      }
+
       p {
         font-size  : calc(var(--bv) * 2);
         font-weight: normal;
         line-height: 1.65;
         color      : c.$black;
+
+        &:first-of-type {
+          min-height : 80px;
+          flex: 1 0 auto;
+        }
       }
 
       .timer_quote {

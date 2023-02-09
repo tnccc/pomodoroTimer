@@ -33,7 +33,6 @@
     <div>
       <TimerDisplay 
         :adage="randomAdageList"
-        :intervalId="intervalId"
         :mode="mode"
       />
     </div>
@@ -71,12 +70,7 @@ export default {
   name: 'TimerManager',
   data() {
     return  {
-      intervalId: null,
-      mode: {
-        start: 'start',
-        stop : 'stop',
-        rest : 'rest',
-      },
+      mode: '',
       pomodoro: 0,
       rest    : 0,
       adage: [
@@ -123,12 +117,9 @@ export default {
   },
   methods: {
     startTimer() {
-      this.intervalId = setInterval(() => {
-        this.mode = 'start'
-      })
+      this.mode = 'start'
     },
     stopTimer() {
-      clearInterval(this.intervalId)
       this.mode = 'stop'
     },
   },
