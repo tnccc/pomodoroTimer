@@ -17,27 +17,18 @@
             <div
               :class="$style.timer_count_adjust_box"
             >
-              <span @click="adjustmentTime(600)">▲</span>
-              <span @click="adjustmentTime(60)">▲</span>
+              <span @click="adjustmentTimerSetting(600)">▲</span>
+              <span @click="adjustmentTimerSetting(60)">▲</span>
             </div>
             <div
               :class="$style.timer_count_adjust_box"
             >
-              <span @click="adjustmentTime(-600)">▼</span>
-              <span @click="adjustmentTime(-60)">▼</span>
+              <span @click="adjustmentTimerSetting(-600)">▼</span>
+              <span @click="adjustmentTimerSetting(-60)">▼</span>
             </div>
           </div>
-          <div :class="[$style.timer_count_num, status === 4 || status === 5 && mode === 'rest' ? $style.rest : '']">
-            <span
-              :class="$style.timer_min"
-            >
-              {{ displayMin }}
-            </span>
-            <span
-              :class="$style.timer_sec"
-            >
-              {{ displaySec }}
-            </span>
+          <div :class="$style.timer_count_num">
+            <span>{{ timerDisplay }}</span>
           </div>
           <div :class="$style.timer_description">
             <div
@@ -56,7 +47,11 @@
           </div>
         </div>
       </div>
-      {{ mode }}
+    </div>
+    <div>
+      <button 
+        v-if="!isTimerRunning" @click="startTimer">start</button>
+      <button v-if="isTimerRunning" @click="pauseTimer">pause</button>
     </div>
   </div>
 </template>
@@ -71,13 +66,11 @@ export default {
   },
   data() {
     return { 
-      status: 0,
-      time: 300,
-      pomodoro: 0,
-      longrest: 0,
+      elapsedSeconds: 0,
+      timerSettingSecondsMin: 0,
+      timerSettingSecondsMax: 5999,
+      timerSettingSeconds: 3,
       intervalId: null,
-      min: 0,
-      sec: 0,
     }
   },
   props: {
@@ -86,129 +79,46 @@ export default {
       type: Object,
     },
     mode: {
-      required: false,
-      type: String,
-      default: '',
+      required: true,
+      type: Object,
     },
   },
   computed: {
-    displayMin() {
-      if (this.intervalId) {
-        return this.min.toString().padStart(2, 0)
-      } else {
-        return Math.floor(this.time / 60).toString().padStart(2, 0)
-      }
+    isTimerRunning() {
+      return this.intervalId !== null;
     },
-    displaySec() {
-      if (this.intervalId) {
-        return this.sec.toString().padStart(2, '0')
-      } else {
-        return (this.time % 60).toString().padStart(2, '0')
-      }
+    timeLeft() {
+      return this.timerSettingSeconds - this.elapsedSeconds;
+    },
+    timerDisplay() {
+      const min = Math.floor(this.timeLeft / 60).toString().padStart(2, 0)
+      const sec = (this.timeLeft % 60).toString().padStart(2, '0')
+      return `${min}:${sec}`;
     },
   },
   methods: {
-    adjustmentTime(time) {
-      if (this.time + time < 0 | this.time + time > 5999) {
+    adjustmentTimerSetting(time) {
+      if (this.timerSettingSeconds + time < this.timerSettingSecondsMin | this.timerSettingSeconds + time > this.timerSettingSecondsMax) {
         return;
       }
-      this.time += time
+      this.timerSettingSeconds += time
     },
-    countStart() {
-      console.log(this.mode)
-      if(this.mode === 'start') {
-        console.log('発火')
-        this.intervalId = setInterval(() => {
-          this.time --
-          this.min = this.countSegmentation(Math.floor(this.time / 60), 2)
-          this.sec = this.countSegmentation(this.time % 60, 2)
-          if(this.time === 0) {
-            clearInterval(this.intervalId)
-          }
-        }, 1000)
-      }
+    startTimer() {
+      this.$emit('start', this.mode);
+      this.intervalId = setInterval(() => {
+        this.elapsedSeconds += 1
+        if (this.timeLeft === 0) {
+          clearInterval(this.intervalId)
+          this.$emit('finish', this.mode);
+        }
+      }, 1000);
     },
-    // countStop() {
-    //   if(this.mode === 'stop') {
-    //     console.log('countStop')
-    //     this.min = this.countSegmentation(Math.floor(this.time / 60), 2)
-    //     this.sec = this.countSegmentation(this.time % 60, 2)
-    //   }
-    // },
-    countSegmentation(num, length) {
-      return ('00' + num).slice(-length)
+    pauseTimer() {
+      clearInterval(this.intervalId)
+      this.intervalId = null;
+      console.log(this.intervalId)
+      this.$emit('pause', this.mode);
     },
-    // countCheck() {
-    //   if(this.status === 0) {
-    //     this.status = 1
-
-    //     if(this.status === 1) {
-    //       this.mode = 'work'
-    //       this.status = 2
-    //       console.log(this.mode)
-    //       this.countStart()
-    //     } 
-    //   } else if (this.status === 2 && this.mode === 'work') {
-    //     this.mode = 'stop'
-    //     this.status = 0
-    //     this.countStop()
-    //   } else if (this.status === 0 && this.mode === 'stop') {
-    //     this.mode = 'work'
-    //     this.status = 1
-    //   } else if (this.status === 4) {
-    //     this.mode = 'rest'
-    //     this.status = 5
-    //     console.log(this.mode)
-    //     console.log(this.status)
-    //     this.countStart()
-    //   }  else if(this.status === 5 && this.mode === 'rest') {
-    //     this.status = 4
-    //     this.countStop()
-    //   }
-    // },
-    // count() {
-    //   if(this.time === 0 && this.mode === 'work') {
-    //     this.min = 0;
-    //     this.sec = 0;
-    //     this.status = 4
-    //     this.mode = 'rest' 
-    //     this.time = 10
-    //     this.pomodoro++
-    //     this.countStop()
-    //   } else if(this.time === 0 && this.status === 5 && this.mode === 'rest') {
-    //     this.min = 0;
-    //     this.sec = 0;
-    //     this.status = 0
-    //     this.mode = 'default' 
-    //     this.time = 10
-    //     this.rest++
-    //     this.countStop()
-    //   }
-    //   else {
-    //     this.time -= 1;
-    //     this.min = this.countSegmentation(Math.floor(this.time / 60), 2)
-    //     this.sec = this.countSegmentation(this.time % 60, 2)
-    //   }
-    // },
-    // countStart() { //statusがtrueの時に処理が実行される、また1秒ごとに関数が実行される
-    //   this.min = this.countSegmentation(Math.floor(this.time / 60), 2)
-    //   this.sec = this.countSegmentation(this.time % 60, 2)
-    //   this.intervalId = setInterval(() => {
-    //     this.count()
-    //   }, 1000);
-    // },
-    // // TODO?ここの引数にNEXT処理（statusに応じた）を関数で渡しては？
-    // countStop() { //statusが2の時に実行される、また1秒ごとに実行していた処理を止める
-    //   clearInterval(this.intervalId); 
-    //   this.min = this.countSegmentation(Math.floor(this.time / 60), 2)
-    //   this.sec = this.countSegmentation(this.time % 60, 2)
-    //   console.log(this.mode)
-    //   console.log(this.status)
-    // },
-    // changeSettingTime(e) {
-    //   console.log(e.target.value)
-    //   this.time = 60 * e.target.value;
-    // },
   },
 }
 </script>
@@ -260,11 +170,13 @@ export default {
       color          : c.$blue;
 
       &_adjust {
+        position       : relative;
         margin-top     : -2rem;
         display        : flex;
         font-size      : calc(var(--bv) * 2);
         justify-content: center;
         align-items    : center;
+        z-index        : v.zIndex('nav');
       }
 
       &_num {

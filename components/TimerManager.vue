@@ -1,8 +1,5 @@
 <template>
-  <!-- TODO: モードメニューはTimerからこっちに移す -->
-  <!-- TODO: Start・STOPのボタンもこっちに移す -->
   <!-- TODO: MODE/status はこっちで管理する -->
-  <!-- TODO: 格言のデータ管理もこっち。格言はpropsで渡す -->
   <!-- 各タイマーの状態はmanager管理のイメージです。（どのモードで動いてるとか、動いてる、止まってる等） -->
   <div
     :class="$style.container"
@@ -10,57 +7,39 @@
     <div
       :class="$style.mode"
     >
-      <button
-        @click="startTimer"
+      <button 
+        @click="changeMode(modes.pomodoro)"
         :class="[$style.mode_button, $style.mode_button_pomodoro, $style.current]"
       >
         Pomodoro
-        <span :class="$style.num">{{ pomodoro }}</span>
+        <span :class="$style.num">{{ finishedPomodoroCount }}</span>
       </button>
-      <button
+      <button 
+        @click="changeMode(modes.rest)"
         :class="[$style.mode_button, $style.mode_button_rest]"
       >
         Rest
-        <span :class="$style.num">{{ rest }}</span>
+        <span :class="$style.num">{{ finishedRestCount }}</span>
       </button>
-      <button
+      <button 
+      @click="changeMode(modes.longRest)"
         :class="[$style.mode_button, $style.mode_button_rest]"
       >
         Long Rest
-        <span :class="$style.num">{{ rest }}</span>
+        <span :class="$style.num">{{ finishedLongRestCount }}</span>
       </button>
     </div>
     <div>
       <TimerDisplay 
-        :adage="randomAdageList"
+        v-for="mode in modes" 
+        v-show="isActiveTimer(mode)"
+        :key="mode.id"
         :mode="mode"
+        :adage="randomAdageList"
+        @start="onTimerStart"
+        @pause="onTimerPause"
+        @finish="onTimerFinish"
       />
-    </div>
-    <div
-      :class="$style.timer"
-    >
-      <div
-        v-if="mode === 'stop'"
-      >
-        <button
-          @click="startTimer"
-          :class="[$style.timer_button,]"
-          type="button"
-          >
-            <span>START</span>
-        </button>
-      </div>
-      <div
-        v-if="mode === 'start'"
-      >
-        <button
-          @click="stopTimer"
-          :class="[$style.timer_button,]"
-          type="button"
-          >
-            <span>STOP</span>
-        </button>
-      </div>
     </div>
   </div>
 </template>
@@ -70,9 +49,16 @@ export default {
   name: 'TimerManager',
   data() {
     return  {
-      mode: '',
-      pomodoro: 0,
-      rest    : 0,
+      modes: {
+        pomodoro: { id: 1, name:'pomodoro'},
+        rest    : { id: 2, name:'rest'},
+        longRest: { id: 3, name:'longrest'},
+      },
+      activeMode: null,
+      finishedPomodoroCount: 0,
+      finishedRestCount    : 0,
+      finishedLongRestCount    : 0,
+      // TODO: adageは外部ファイルに切り出す(JSON)
       adage: [
         {
           id: 1,
@@ -104,23 +90,29 @@ export default {
     }
   },
   created() {
-    this.mode = 'stop'
+    this.activeMode = this.modes.pomodoro
   },
   computed: {
     randomAdageList() {
       const random = this.adage[Math.floor(Math.random() * this.adage.length)]
       return random
     },
-    modeStatus() {
-      return this.mode
-    },
   },
   methods: {
-    startTimer() {
-      this.mode = 'start'
+    isActiveTimer(mode) {
+      return this.activeMode.id === mode.id
     },
-    stopTimer() {
-      this.mode = 'stop'
+    changeMode(mode){
+      this.activeMode = mode
+    },
+    onTimerStart() {
+      console.log('start')
+    },
+    onTimerPause() {
+      console.log('pause')
+    },
+    onTimerFinish() {
+      console.log('finish')
     },
   },
 }
