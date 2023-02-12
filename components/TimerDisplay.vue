@@ -20,15 +20,19 @@
               <span @click="adjustmentTimerSetting(600)">▲</span>
               <span @click="adjustmentTimerSetting(60)">▲</span>
             </div>
+          </div>
+          <div :class="$style.timer_count_num">
+            <span>{{ timerDisplay }}</span>
+          </div>
+          <div
+            :class="$style.timer_count_adjust"
+          >
             <div
               :class="$style.timer_count_adjust_box"
             >
               <span @click="adjustmentTimerSetting(-600)">▼</span>
               <span @click="adjustmentTimerSetting(-60)">▼</span>
             </div>
-          </div>
-          <div :class="$style.timer_count_num">
-            <span>{{ timerDisplay }}</span>
           </div>
           <div :class="$style.timer_description">
             <div
@@ -48,10 +52,23 @@
         </div>
       </div>
     </div>
-    <div>
+    <div
+      :class="$style.button_area"
+    >
       <button 
-        v-if="!isTimerRunning" @click="startTimer">start</button>
-      <button v-if="isTimerRunning" @click="pauseTimer">pause</button>
+        v-if="!isTimerRunning" 
+        @click="startTimer"
+        :class="$style.timer_button"
+      >
+        start
+      </button>
+      <button 
+        v-if="isTimerRunning" 
+        @click="pauseTimer"
+        :class="$style.timer_button"
+      >
+          pause
+      </button>
     </div>
   </div>
 </template>
@@ -165,29 +182,37 @@ export default {
     }
 
     &_count {
-      font-size      : calc(var(--bv) * 13 - 4px);
-      font-weight    : bolder;
-      color          : c.$blue;
+      margin-top : 1rem;
+      font-size  : calc(var(--bv) * 13 - 4px);
+      font-weight: bolder;
+      color      : var(--blue);
 
       &_adjust {
         position       : relative;
-        margin-top     : -2rem;
+        padding-left   : calc(var(--bv) * 6);
         display        : flex;
-        font-size      : calc(var(--bv) * 2);
-        justify-content: center;
+        justify-content: flex-start;
         align-items    : center;
+        font-size      : calc(var(--bv) * 3);
         z-index        : v.zIndex('nav');
+        cursor         : pointer;
+
+        &:first-of-type {
+          margin-top     : -2rem;
+        }
+
+        &_box {
+          display: flex;
+          gap    : 0 calc(var(--bv) * 4.5);
+        }
       }
 
       &_num {
+        margin-top     : -0.35rem;
         display        : flex;
-        max-height     : 136px;
+        max-height     : 80px;
         align-items    : center;
         justify-content: center;
-
-        &.rest{
-          color:  c.$mainGreen; 
-        }
       }
     }
 
@@ -206,7 +231,7 @@ export default {
       text-align: center;
 
       > div {
-        margin        : 0 auto;
+        margin        : calc(var(--bv) * 3) auto 0;
         display       : flex;
         flex-direction: column;
         max-width     : 320px;
@@ -219,8 +244,8 @@ export default {
         color      : c.$black;
 
         &:first-of-type {
-          min-height : 80px;
-          flex: 1 0 auto;
+          min-height: 80px;
+          flex      : 1 0 auto;
         }
       }
 
@@ -229,7 +254,28 @@ export default {
       }
 
       .timer_name {
-        margin-top: calc(var(--bv) * 3);
+        margin-top: calc(var(--bv) * 2);
+      }
+    }
+
+    .button_area {
+      display        : flex;
+      justify-content: center
+    }
+
+    &_button {
+      @include m.component_button(22.5rem, 60px, 20px, c.$accentColor);
+      margin-top : calc(var(--bv) * 4);
+      padding    : calc(var(--bv) * 3);
+      font-size  : calc(var(--bv) * 2.5);
+      font-weight: bold;
+      box-shadow : 0 4px 4px 2px rgba($color: #000000, $alpha: .08);
+      transition: background-color .3s, border .3s, color .3s;
+      
+      &:hover {
+        color           : var(--blue);
+        background-color: var(--white);
+        border          : solid 2px var(--blue);
       }
     }
   }
@@ -239,7 +285,7 @@ export default {
 
     &_timer {
       display        : flex;
-      justify-content: center;
+      justify-content: start;
       gap: 0 calc(var(--bv) * 2);
 
       &_item {

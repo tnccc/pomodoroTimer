@@ -45,6 +45,8 @@
 </template>
 
 <script>
+import adage from '../module/adage.json'
+
 export default {
   name: 'TimerManager',
   data() {
@@ -54,39 +56,11 @@ export default {
         rest    : { id: 2, name:'rest'},
         longRest: { id: 3, name:'longrest'},
       },
-      activeMode: null,
+      activeMode           : null,
       finishedPomodoroCount: 0,
       finishedRestCount    : 0,
-      finishedLongRestCount    : 0,
-      // TODO: adageは外部ファイルに切り出す(JSON)
-      adage: [
-        {
-          id: 1,
-          description: `挫折を経験したことが無い者は、何も新しい事に<br>
-          挑戦したことが無いということだ`,
-          name: 'アインシュタイン （1879～1955）'
-        },
-        {
-          id: 2,
-          description: `目標を達成するには、全力で取り組む以外に方法はない。<br>そこに近道はない`,
-          name: 'マイケル・ジョーダン（1963～）'
-        },
-        {
-          id: 3,
-          description: `結果が出ないとき、どういう自分でいられるか。<br>決してあきらめない姿勢が何かを生み出すきっかけをつくる`,
-          name: 'イチロー（1973～）'
-        },
-        {
-          id: 4,
-          description: `もし今日が人生最後の日だとしたら、<br>今やろうとしていることは本当に自分のやりたいことだろうか？`,
-          name: 'スティーブ・ジョブズ（1955～2011）'
-        },
-        {
-          id: 5,
-          description: `しっかりと準備もしていないのに、<br>目標を語る資格はない。`,
-          name: 'イチロー（1973～）'
-        },
-      ],
+      finishedLongRestCount: 0,
+      adage,
     }
   },
   created() {
