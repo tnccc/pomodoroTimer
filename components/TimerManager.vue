@@ -1,6 +1,9 @@
 <template>
   <!-- TODO: MODE/status はこっちで管理する -->
   <!-- 各タイマーの状態はmanager管理のイメージです。（どのモードで動いてるとか、動いてる、止まってる等） -->
+  <!-- TODO: タイマー作動時、他のモードに移行を禁止 -->
+  <!-- TODO: タブに残り時間を表示させたい -->
+  <!-- TODO: プログレスバーの追加 -->
   <div
     :class="$style.container"
   >
@@ -12,21 +15,21 @@
         :class="[$style.mode_button, $style.mode_button_pomodoro, $style.current]"
       >
         Pomodoro
-        <span :class="$style.num">{{ finishedPomodoroCount }}</span>
+        <span :class="$style.num">{{ modes.pomodoro.finishedCount }}</span>
       </button>
       <button 
         @click="changeMode(modes.rest)"
         :class="[$style.mode_button, $style.mode_button_rest]"
       >
         Rest
-        <span :class="$style.num">{{ finishedRestCount }}</span>
+        <span :class="$style.num">{{ modes.rest.finishedCount }}</span>
       </button>
       <button 
       @click="changeMode(modes.longRest)"
         :class="[$style.mode_button, $style.mode_button_rest]"
       >
         Long Rest
-        <span :class="$style.num">{{ finishedLongRestCount }}</span>
+        <span :class="$style.num">{{ modes.longRest.finishedCount }}</span>
       </button>
     </div>
     <div>
@@ -35,12 +38,13 @@
         v-show="isActiveTimer(mode)"
         :key="mode.id"
         :mode="mode"
-        :adage="randomAdageList"
+        :adage="randomAdageList()"
         @start="onTimerStart"
         @pause="onTimerPause"
         @finish="onTimerFinish"
       />
     </div>
+    <div>currentMode: {{ activeMode.name }}</div>
   </div>
 </template>
 
@@ -52,27 +56,22 @@ export default {
   data() {
     return  {
       modes: {
-        pomodoro: { id: 1, name:'pomodoro'},
-        rest    : { id: 2, name:'rest'},
-        longRest: { id: 3, name:'longrest'},
+        pomodoro: { id: 1, name:'pomodoro', nextModeKey: 'rest', finishedCount: 0},
+        rest    : { id: 2, name:'rest', nextModeKey: 'pomodoro', finishedCount: 0},
+        longRest: { id: 3, name:'longrest', nextModeKey: null, finishedCount: 0},
       },
       activeMode           : null,
-      finishedPomodoroCount: 0,
-      finishedRestCount    : 0,
-      finishedLongRestCount: 0,
       adage,
     }
   },
   created() {
     this.activeMode = this.modes.pomodoro
   },
-  computed: {
+  methods: {
     randomAdageList() {
       const random = this.adage[Math.floor(Math.random() * this.adage.length)]
       return random
     },
-  },
-  methods: {
     isActiveTimer(mode) {
       return this.activeMode.id === mode.id
     },
@@ -85,8 +84,11 @@ export default {
     onTimerPause() {
       console.log('pause')
     },
-    onTimerFinish() {
+    onTimerFinish(mode) {
       console.log('finish')
+      mode.finishedCount++
+      const nextMode = this.modes[mode.nextModeKey]
+      this.activeMode = nextMode
     },
   },
 }

@@ -243,6 +243,7 @@ export default {
   --light-gray  : #E2E8F0;
   --dull-gray   : #CBD5E1;
   --green       : #059669;
+  --rightGreen  : #9CFBDD;
   --border-width: 0;
 }
 

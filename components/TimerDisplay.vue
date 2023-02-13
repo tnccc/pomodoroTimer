@@ -1,6 +1,10 @@
 <template>
   <div
-    :class="$style.container"
+    :class="[$style.container, 
+    { [$style.pomodoro]: mode.name === 'pomodoro'},
+    { [$style.rest]: mode.name === 'rest' || mode.name === 'longrest'},
+    ,
+    ]"
   >
     <div
       :class="$style.timer"
@@ -64,7 +68,7 @@
       </button>
       <button 
         v-if="isTimerRunning" 
-        @click="pauseTimer"
+        @click="onPause"
         :class="$style.timer_button"
       >
           pause
@@ -110,7 +114,7 @@ export default {
     timerDisplay() {
       const min = Math.floor(this.timeLeft / 60).toString().padStart(2, 0)
       const sec = (this.timeLeft % 60).toString().padStart(2, '0')
-      return `${min}:${sec}`;
+      return `${min}:${sec}`
     },
   },
   methods: {
@@ -120,21 +124,27 @@ export default {
       }
       this.timerSettingSeconds += time
     },
+    initializeTimer() {
+      this.elapsedSeconds = 0;
+    },
     startTimer() {
-      this.$emit('start', this.mode);
+      this.$emit('start', this.mode)
       this.intervalId = setInterval(() => {
         this.elapsedSeconds += 1
         if (this.timeLeft === 0) {
-          clearInterval(this.intervalId)
-          this.$emit('finish', this.mode);
+          this.pauseTimer()
+          this.initializeTimer()
+          this.$emit('finish', this.mode)
         }
       }, 1000);
     },
     pauseTimer() {
       clearInterval(this.intervalId)
-      this.intervalId = null;
-      console.log(this.intervalId)
-      this.$emit('pause', this.mode);
+      this.intervalId = null
+    },
+    onPause() {
+      this.pauseTimer()
+      this.$emit('pause', this.mode)
     },
   },
 }
@@ -265,12 +275,12 @@ export default {
 
     &_button {
       @include m.component_button(22.5rem, 60px, 20px, c.$accentColor);
-      margin-top : calc(var(--bv) * 4);
+      margin     : calc(var(--bv) * 4) auto 0;
       padding    : calc(var(--bv) * 3);
       font-size  : calc(var(--bv) * 2.5);
       font-weight: bold;
       box-shadow : 0 4px 4px 2px rgba($color: #000000, $alpha: .08);
-      transition: background-color .3s, border .3s, color .3s;
+      transition : background-color .3s, border .3s, color .3s;
       
       &:hover {
         color           : var(--blue);
@@ -335,6 +345,43 @@ export default {
           width  : 16px;
           height : 16px;
           cursor : pointer;
+        }
+      }
+    }
+  }
+
+  &.rest {
+
+    
+    .timer {
+
+      &_container {
+        &::before {
+          border: solid 8px rgba($color: #059669, $alpha: .45);
+        }
+      }
+
+      &_count {
+
+        &_adjust {
+
+          &_box {
+            color: var(--green);
+          }
+        }
+
+        &_num {
+          color: var(--green);
+        }
+      }
+
+      &_button {
+        background-color: var(--green);
+
+        &:hover {
+          color           : var(--green);
+          background-color: var(--white);
+          border          : solid 2px var(--green);
         }
       }
     }
