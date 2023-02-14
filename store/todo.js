@@ -42,7 +42,6 @@ export const getters = {
     isDoneTodos(state) {
         return state.isDoneTodos
     },
-    // TODO: state.todosをidでソートしたデータと、state.isDoneTodosをidでソートしたデータを結合して返す
     todoList(state) {
         const sortedTodos = state.todos.map(todos => todos).sort((a, b) => a.id < b.id ? -1 : 1);
         const sortedIsDoneTodos = state.isDoneTodos.map(todos => todos).sort((a, b) => a.id < b.id ? -1 : 1);

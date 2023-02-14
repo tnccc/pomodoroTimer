@@ -1,16 +1,56 @@
 <template>
   <div
     :class="$style.container"
-    @click="clickTest"
+    @click="hideDropdown"
   >
     <GlobalHeader />
     <div
       :class="$style.contents"
     >
       <div
+        :class="$style.push"
+      >
+        <button
+          @click="pushWindow"
+          :class="$style.push_button"
+        >
+          push!!!
+        </button>
+        <div
+          v-if="isHidePushWindow"
+          :class="$style.window"
+        >
+          <div
+            :class="$style.window_container"
+          >
+            <div
+              :class="$style.window_image"
+            >
+              <PushTimer />
+              <div
+                :class="$style.window_image_heading"
+              >
+                <span>お知らせ</span>
+                <span>ポモドーロが終了しました。</span>
+                <span>Pomodoro TImer</span>
+              </div>
+            </div>
+            <div
+              :class="$style.window_contents"
+            >
+              <button
+                @click="isHidePushWindow = false"
+              >
+                ×
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
         :class="$style.contents_grid"
       >
-        <PomodoroTimer 
+        <TimerManager
           :class="$style.timer"
         />
         <div
@@ -91,46 +131,6 @@
           </div>
         </div>
       </div>
-    </div>
-    <div
-      :class="$style.push"
-      >
-        <button
-          @click="pushWindow"
-          :class="$style.push_button"
-        >
-          push!!!
-        </button>
-        <div
-          v-if="isHidePushWindow"
-          :class="$style.window"
-        >
-          <div
-            :class="$style.window_container"
-          >
-            <div
-              :class="$style.window_image"
-            >
-              <PushTimer />
-              <div
-                :class="$style.window_image_heading"
-              >
-                <span>お知らせ</span>
-                <span>ポモドーロが終了しました。</span>
-                <span>Pomodoro TImer</span>
-              </div>
-            </div>
-            <div
-              :class="$style.window_contents"
-            >
-              <button
-                @click="isHidePushWindow = false"
-              >
-                ×
-              </button>
-            </div>
-          </div>
-        </div>
     </div>
     <SoundPlayer
       :class="$style.sound"
@@ -217,8 +217,7 @@ export default {
     startAddMode() {
       this.todoAddMode = true
     },
-    clickTest() {
-      console.log('=> clickTest')
+    hideDropdown() {
       this.isDropdownVisible = false;
     },
     pushWindow() {
@@ -243,7 +242,7 @@ export default {
   --gray        : #5F6368;
   --light-gray  : #E2E8F0;
   --dull-gray   : #CBD5E1;
-  --accent-color: #0B57D0;
+  --green       : #059669;
   --border-width: 0;
 }
 
@@ -419,9 +418,10 @@ export default {
     border: solid 1px var(--dull-gray);
 
     &_container {
-      padding: calc(var(--bv) * 2);
-      display: flex;
-      width: 420px;
+      padding         : calc(var(--bv) * 2);
+      display         : flex;
+      width           : 420px;
+      background-color: var(--white);
     }
 
     &_image {
