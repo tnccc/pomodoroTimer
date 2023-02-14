@@ -1,9 +1,9 @@
 <template>
   <div
-    :class="[$style.container, 
-    { [$style.pomodoro]: mode.name === 'pomodoro'},
-    { [$style.rest]: mode.name === 'rest' || mode.name === 'longrest'},
-    ,
+    :class="
+      [$style.container, 
+      {[$style.pomodoro]: mode.name === 'pomodoro'},
+      {[$style.rest]: mode.name === 'rest' || mode.name === 'longrest'},
     ]"
   >
     <div
@@ -12,6 +12,11 @@
       <div
         :class="$style.timer_container"
       >
+        <div
+          id="timerOutline"
+          :class="$style.timer_container_outline"
+          :style="progress"
+        ></div>
         <div
           :class="$style.timer_count"
         >
@@ -116,6 +121,12 @@ export default {
       const sec = (this.timeLeft % 60).toString().padStart(2, '0')
       return `${min}:${sec}`
     },
+    progress() {
+      const bar = this.elapsedSeconds
+      return {
+        ['--border-width']: `${bar}%`
+      }
+    },
   },
   methods: {
     adjustmentTimerSetting(time) {
@@ -184,10 +195,14 @@ export default {
         z-index      : -1;
       }
 
-      &::after {
-        content: "";
-        stroke-dashoffset: 1px;
-        
+      &_outline {
+        --border-width   : 0;
+        position         : absolute;
+        top              : 0;
+        left             : 0;
+        stroke-dashoffset: var(--border-width);
+        height           : 100%;
+        border-radius    : 50%;
       }
     }
 
@@ -223,17 +238,6 @@ export default {
         max-height     : 80px;
         align-items    : center;
         justify-content: center;
-      }
-    }
-
-    &_min {
-      display: flex;
-      
-      &::after {
-        content : ":";
-        position: relative;
-        bottom  : var(--bv);
-        display : block;
       }
     }
 

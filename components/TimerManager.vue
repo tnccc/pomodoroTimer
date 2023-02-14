@@ -12,21 +12,28 @@
     >
       <button 
         @click="changeMode(modes.pomodoro)"
-        :class="[$style.mode_button, $style.mode_button_pomodoro, $style.current]"
+        :class="
+        [$style.mode_button, $style.mode_button_pomodoro,
+          {[$style.current]: activeMode.name === 'pomodoro'}
+        ]"
       >
         Pomodoro
         <span :class="$style.num">{{ modes.pomodoro.finishedCount }}</span>
       </button>
       <button 
         @click="changeMode(modes.rest)"
-        :class="[$style.mode_button, $style.mode_button_rest]"
+        :class="[$style.mode_button, $style.mode_button_rest,
+          {[$style.current]: activeMode.name === 'rest'}
+        ]"
       >
         Rest
         <span :class="$style.num">{{ modes.rest.finishedCount }}</span>
       </button>
       <button 
       @click="changeMode(modes.longRest)"
-        :class="[$style.mode_button, $style.mode_button_rest]"
+        :class="[$style.mode_button, $style.mode_button_rest,
+        {[$style.current]: activeMode.name === 'longrest'}
+      ]"
       >
         Long Rest
         <span :class="$style.num">{{ modes.longRest.finishedCount }}</span>
@@ -60,7 +67,7 @@ export default {
         rest    : { id: 2, name:'rest', nextModeKey: 'pomodoro', finishedCount: 0},
         longRest: { id: 3, name:'longrest', nextModeKey: null, finishedCount: 0},
       },
-      activeMode           : null,
+      activeMode: null,
       adage,
     }
   },
