@@ -95,7 +95,7 @@ export default {
       elapsedSeconds: 0,
       timerSettingSecondsMin: 0,
       timerSettingSecondsMax: 5999,
-      timerSettingSeconds: 3,
+      timerSettingSeconds: 0,
       intervalId: null,
     }
   },
@@ -107,6 +107,24 @@ export default {
     mode: {
       required: true,
       type: Object,
+    },
+    isActive: {
+      required: true,
+      type: Boolean,
+    },
+    settingTime: {
+      required: true,
+      type: Number,
+    },
+  },
+  created() {
+    this.timerSettingSeconds = this.settingTime
+  },
+  watch: {
+    isActive(newVal, oldVal) {
+      if(newVal) {
+        this.$emit('timerSet', this.timerDisplay)
+      }
     },
   },
   computed: {
@@ -140,8 +158,10 @@ export default {
     },
     startTimer() {
       this.$emit('start', this.mode)
+      this.$emit('timerTick', this.timerDisplay)
       this.intervalId = setInterval(() => {
         this.elapsedSeconds += 1
+        this.$emit('timerTick', this.timerDisplay)
         if (this.timeLeft === 0) {
           this.pauseTimer()
           this.initializeTimer()
