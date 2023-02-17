@@ -1,9 +1,9 @@
 <template>
   <!-- TODO: MODE/status はこっちで管理する -->
   <!-- 各タイマーの状態はmanager管理のイメージです。（どのモードで動いてるとか、動いてる、止まってる等） -->
-  <!-- TODO: タイマー作動時、他のモードに移行を禁止 -->
-  <!-- TODO: タブに残り時間を表示させたい -->
+  <!-- TODO: Longrest挙動 => 実装 -->
   <!-- TODO: プログレスバーの追加 -->
+  <!-- TODO: タイマー終了時のプッシュ通知 -->
   <div
     :class="$style.container"
   >
@@ -12,9 +12,11 @@
     >
       <button 
         @click="changeMode(modes.pomodoro)"
+        :disabled="activeMode.name !== 'pomodoro'"
         :class="
         [$style.mode_button, $style.mode_button_pomodoro,
-          {[$style.current]: activeMode.name === 'pomodoro'}
+          {[$style.current]: activeMode.name === 'pomodoro', 
+          'timer-stop': timerStarting && activeMode.name !== 'pomodoro'}
         ]"
       >
         Pomodoro
@@ -22,17 +24,19 @@
       </button>
       <button 
         @click="changeMode(modes.rest)"
+        :disabled="activeMode.name !== 'rest'"
         :class="[$style.mode_button, $style.mode_button_rest,
-          {[$style.current]: activeMode.name === 'rest'}
+          {[$style.current]: activeMode.name === 'rest', 'timer-stop': timerStarting && activeMode.name !== 'rest'}
         ]"
       >
         Rest
         <span :class="$style.num">{{ modes.rest.finishedCount }}</span>
       </button>
       <button 
-      @click="changeMode(modes.longRest)"
+        @click="changeMode(modes.longRest)"
+        :disabled="activeMode.name !== 'longrest'"
         :class="[$style.mode_button, $style.mode_button_rest,
-        {[$style.current]: activeMode.name === 'longrest'}
+        {[$style.current]: activeMode.name === 'longrest', 'timer-stop': timerStarting && activeMode.name !== 'longrest'}
       ]"
       >
         Long Rest
@@ -45,7 +49,11 @@
         v-show="isActiveTimer(mode)"
         :key="mode.id"
         :mode="mode"
+        :isActive="isActiveTimer(mode)"
+        :settingTime="mode.defaultTime"
         :adage="randomAdageList()"
+        @timerSet="onTimerSet"
+        @timerTick="onTimerTick"
         @start="onTimerStart"
         @pause="onTimerPause"
         @finish="onTimerFinish"
@@ -63,10 +71,11 @@ export default {
   data() {
     return  {
       modes: {
-        pomodoro: { id: 1, name:'pomodoro', nextModeKey: 'rest', finishedCount: 0},
-        rest    : { id: 2, name:'rest', nextModeKey: 'pomodoro', finishedCount: 0},
-        longRest: { id: 3, name:'longrest', nextModeKey: null, finishedCount: 0},
+        pomodoro: { id: 1, name:'pomodoro', nextModeKey: 'rest', defaultTime: 120, finishedCount: 0},
+        rest    : { id: 2, name:'rest', nextModeKey: 'pomodoro', defaultTime: 300, finishedCount: 0},
+        longRest: { id: 3, name:'longrest', nextModeKey: null, defaultTime: 1200, finishedCount: 0},
       },
+      timerStarting: false,
       activeMode: null,
       adage,
     }
@@ -85,13 +94,22 @@ export default {
     changeMode(mode){
       this.activeMode = mode
     },
+    onTimerSet(timeDisplay) {
+      document.title = timeDisplay
+    },
+    onTimerTick(timeDisplay) {
+      document.title = timeDisplay
+    },
     onTimerStart() {
+      this.timerStarting = true;
       console.log('start')
     },
     onTimerPause() {
+      this.timerStarting = false;
       console.log('pause')
     },
     onTimerFinish(mode) {
+      this.timerStarting = false;
       console.log('finish')
       mode.finishedCount++
       const nextMode = this.modes[mode.nextModeKey]
@@ -121,6 +139,8 @@ export default {
       position   : relative;
       font-size  : calc(var(--bv) * 2);
       font-family: f.family('english');
+      cursor     : not-allowed;
+      opacity    : .5;
       background : none;
 
       &::before {
@@ -145,6 +165,8 @@ export default {
       }
 
       &.current {
+        opacity       : 1;
+        cursor        : pointer;
 
         &::after {
           content         : "";
