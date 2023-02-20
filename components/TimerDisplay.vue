@@ -12,11 +12,7 @@
       <div
         :class="$style.timer_container"
       >
-        <div
-          id="timerOutline"
-          :class="$style.timer_container_outline"
-          :style="progress"
-        ></div>
+        <div :class="$style.timer_circle"></div>
         <div
           :class="$style.timer_count"
         >
@@ -186,10 +182,47 @@ export default {
 @use "@/assets/scss/font" as f;
 @use "@/assets/scss/color" as c;
 @use "@/assets/scss/mixin" as m;
+
+@keyframes rotate-circle-right {
+    0%   {
+        transform: rotate(0deg);
+        background: var(--blue);
+    }
+    50%  {
+        transform: rotate(180deg);
+        background: var(--blue);
+    }
+    50.01% {
+        transform: rotate(360deg);
+        background: var(--blue);
+    }
+    100% {
+        transform: rotate(360deg);
+        background: var(--blue);
+    }
+}
+
+@keyframes rotate-circle-left {
+    0%   { transform: rotate(0deg); }
+    50%  { transform: rotate(0deg); }
+    100% { transform: rotate(180deg); }
+}
+
 .container {
 
   .timer {
     margin-top: calc(var(--bv) * 4.5);
+
+    &_circle {
+      position        : absolute;
+      top             : 0;
+      left            : 0;
+      width           : 26.5rem;
+      height          : 26.5rem;
+      background-color: var(--light-gray);
+      border-radius   : 50%;
+      // z-index         : 4;
+    }
     
     &_container {
       position        : relative;
@@ -199,34 +232,17 @@ export default {
       justify-content : center;
       width           : 26.5rem;
       height          : 26.5rem;
+      // border          : solid 8px c.$lightGray;
       border-radius   : 50%;
       font-family     : f.family('english');
       background-color: rgba($color: #D3E3FD, $alpha: 0.25);
+      z-index         : 5;
+      overflow        : hidden;
 
-      &::before {
-        content      : "";
-        position     : absolute;
-        left         : 0;
-        top          : 0;
-        width        : 100%;
-        height       : 100%;
-        border       : solid 8px c.$lightGray;
-        border-radius: 50%;
-        z-index      : -1;
-      }
-
-      &_outline {
-        --border-width   : 0;
-        position         : absolute;
-        top              : 0;
-        left             : 0;
-        stroke-dashoffset: var(--border-width);
-        height           : 100%;
-        border-radius    : 50%;
-      }
     }
 
     &_count {
+      position: relative;
       margin-top : 1rem;
       font-size  : calc(var(--bv) * 13 - 4px);
       font-weight: bolder;

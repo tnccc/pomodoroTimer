@@ -13,23 +13,6 @@
         </h1>
       </div>
       <div
-        :class="$style.list"
-      >
-        <button
-          :class="$style.item"
-        >
-          <MenuReset />
-          <p>リセット</p>
-        </button>
-        <button
-          @click="isDropdownVisible = !isDropdownVisible"
-          :class="$style.item"
-        >
-          <MenuSetting />
-          <p>設定</p>
-        </button>
-      </div>
-      <div
         v-show="isDropdownVisible"
         :class="$style.dropdown"
       >
@@ -55,19 +38,9 @@
 </template>
 
 <script>
-import MenuSetting from '@/assets/images/setting.svg'
-import MenuReset from '@/assets/images/reset.svg'
-import MenuTimer from '@/assets/images/timer.svg'
-import MenuAlarm from '@/assets/images/alarm.svg'
 
 export default {
   name: 'GlobalHeader',
-  components: { 
-    MenuReset,
-    MenuSetting,
-    MenuTimer,
-    MenuAlarm,
-  },
   data() {
     return {
       isDropdownVisible: false,

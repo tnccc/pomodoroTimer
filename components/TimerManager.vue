@@ -1,18 +1,22 @@
 <template>
-  <!-- TODO: MODE/status はこっちで管理する -->
-  <!-- 各タイマーの状態はmanager管理のイメージです。（どのモードで動いてるとか、動いてる、止まってる等） -->
-  <!-- TODO: Longrest挙動 => 実装 -->
   <!-- TODO: プログレスバーの追加 -->
-  <!-- TODO: タイマー終了時のプッシュ通知 -->
+  <!-- TODO: タイマー終了時のプッシュ通知 CSS修正 -->
   <div
     :class="$style.container"
   >
+    <div 
+      v-if="isHidePushWindow"
+      :class="$style.window_image_heading" 
+    >
+      <span>お知らせ</span>
+      <span>{{finishMessage}}</span>
+    </div>
     <div
       :class="$style.mode"
     >
       <button 
         @click="changeMode(modes.pomodoro)"
-        :disabled="activeMode.name !== 'pomodoro'"
+        :disabled="timerStarting"
         :class="
         [$style.mode_button, $style.mode_button_pomodoro,
           {[$style.current]: activeMode.name === 'pomodoro', 
@@ -24,7 +28,7 @@
       </button>
       <button 
         @click="changeMode(modes.rest)"
-        :disabled="activeMode.name !== 'rest'"
+        :disabled="timerStarting"
         :class="[$style.mode_button, $style.mode_button_rest,
           {[$style.current]: activeMode.name === 'rest', 'timer-stop': timerStarting && activeMode.name !== 'rest'}
         ]"
@@ -34,7 +38,7 @@
       </button>
       <button 
         @click="changeMode(modes.longRest)"
-        :disabled="activeMode.name !== 'longrest'"
+        :disabled="timerStarting"
         :class="[$style.mode_button, $style.mode_button_rest,
         {[$style.current]: activeMode.name === 'longrest', 'timer-stop': timerStarting && activeMode.name !== 'longrest'}
       ]"
@@ -47,7 +51,7 @@
       <TimerDisplay 
         v-for="mode in modes" 
         v-show="isActiveTimer(mode)"
-        :key="mode.id"
+        :key="`${resetCount}-${mode.id}`"
         :mode="mode"
         :isActive="isActiveTimer(mode)"
         :settingTime="mode.defaultTime"
@@ -60,6 +64,7 @@
       />
     </div>
     <div>currentMode: {{ activeMode.name }}</div>
+    <div><button @click="resetTimer">RESET TEST</button></div>
   </div>
 </template>
 
@@ -71,12 +76,15 @@ export default {
   data() {
     return  {
       modes: {
-        pomodoro: { id: 1, name:'pomodoro', nextModeKey: 'rest', defaultTime: 120, finishedCount: 0},
-        rest    : { id: 2, name:'rest', nextModeKey: 'pomodoro', defaultTime: 300, finishedCount: 0},
-        longRest: { id: 3, name:'longrest', nextModeKey: null, defaultTime: 1200, finishedCount: 0},
+        pomodoro: { id: 1, name:'pomodoro', nextModeKey: 'rest', defaultTime: 3, finishedCount: 0, finishedMessage: 'ポモドーロが終了しました'},
+        rest    : { id: 2, name:'rest', nextModeKey: 'pomodoro', defaultTime: 300, finishedCount: 0, finishedMessage: '休憩が終了しました'},
+        longRest: { id: 3, name:'longrest', nextModeKey: 'pomodoro', defaultTime: 1200, finishedCount: 0, finishedMessage: '休憩が終了しました'},
       },
       timerStarting: false,
       activeMode: null,
+      resetCount:0,
+      isHidePushWindow: false,
+      finishMessage: '',
       adage,
     }
   },
@@ -110,10 +118,21 @@ export default {
     },
     onTimerFinish(mode) {
       this.timerStarting = false;
-      console.log('finish')
       mode.finishedCount++
+      this.finishMessage = `${mode.finishedCount}回目の${mode.finishedMessage}`;
+      this.isHidePushWindow = true;
+      setTimeout(() => {
+        this.isHidePushWindow = false
+      }, 3000)
       const nextMode = this.modes[mode.nextModeKey]
       this.activeMode = nextMode
+    },
+    resetTimer() {
+      //アラートを表示させる
+      this.resetCount += 1;
+      this.modes.pomodoro.finishedCount = 0
+      this.modes.rest.finishedCount = 0
+      this.modes.longRest.finishedCount = 0
     },
   },
 }
@@ -139,7 +158,6 @@ export default {
       position   : relative;
       font-size  : calc(var(--bv) * 2);
       font-family: f.family('english');
-      cursor     : not-allowed;
       opacity    : .5;
       background : none;
 
