@@ -12,7 +12,6 @@
       <div
         :class="$style.timer_container"
       >
-        <div :class="$style.timer_circle"></div>
         <div
           :class="$style.timer_count"
         >
@@ -73,6 +72,12 @@
         :class="$style.timer_button"
       >
           pause
+      </button>
+      <button
+        @click="pushedRest"
+        :class="[$style.timer_button, $style.reset]"
+      >
+        reset
       </button>
     </div>
   </div>
@@ -135,12 +140,6 @@ export default {
       const sec = (this.timeLeft % 60).toString().padStart(2, '0')
       return `${min}:${sec}`
     },
-    progress() {
-      const bar = this.elapsedSeconds
-      return {
-        ['--border-width']: `${bar}%`
-      }
-    },
   },
   methods: {
     adjustmentTimerSetting(time) {
@@ -173,6 +172,9 @@ export default {
       this.pauseTimer()
       this.$emit('pause', this.mode)
     },
+    pushedRest() {
+      this.$emit('reset')
+    },
   },
 }
 </script>
@@ -183,46 +185,15 @@ export default {
 @use "@/assets/scss/color" as c;
 @use "@/assets/scss/mixin" as m;
 
-@keyframes rotate-circle-right {
-    0%   {
-        transform: rotate(0deg);
-        background: var(--blue);
-    }
-    50%  {
-        transform: rotate(180deg);
-        background: var(--blue);
-    }
-    50.01% {
-        transform: rotate(360deg);
-        background: var(--blue);
-    }
-    100% {
-        transform: rotate(360deg);
-        background: var(--blue);
-    }
-}
-
-@keyframes rotate-circle-left {
-    0%   { transform: rotate(0deg); }
-    50%  { transform: rotate(0deg); }
-    100% { transform: rotate(180deg); }
-}
-
 .container {
+
+  .button_area {
+    display: flex;
+    gap    : 0 calc(var(--bv) * 2);
+  }
 
   .timer {
     margin-top: calc(var(--bv) * 4.5);
-
-    &_circle {
-      position        : absolute;
-      top             : 0;
-      left            : 0;
-      width           : 26.5rem;
-      height          : 26.5rem;
-      background-color: var(--light-gray);
-      border-radius   : 50%;
-      // z-index         : 4;
-    }
     
     &_container {
       position        : relative;
@@ -232,13 +203,12 @@ export default {
       justify-content : center;
       width           : 26.5rem;
       height          : 26.5rem;
-      // border          : solid 8px c.$lightGray;
+      border          : solid 8px c.$lightGray;
       border-radius   : 50%;
       font-family     : f.family('english');
       background-color: rgba($color: #D3E3FD, $alpha: 0.25);
       z-index         : 5;
       overflow        : hidden;
-
     }
 
     &_count {
@@ -277,6 +247,7 @@ export default {
       }
     }
 
+
     &_description {
       text-align: center;
 
@@ -308,13 +279,8 @@ export default {
       }
     }
 
-    .button_area {
-      display        : flex;
-      justify-content: center
-    }
-
     &_button {
-      @include m.component_button(22.5rem, 60px, 20px, c.$accentColor);
+      @include m.component_button(20rem, 60px, 20px, c.$accentColor);
       margin     : calc(var(--bv) * 4) auto 0;
       padding    : calc(var(--bv) * 3);
       font-size  : calc(var(--bv) * 2.5);

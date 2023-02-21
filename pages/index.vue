@@ -8,46 +8,6 @@
       :class="$style.contents"
     >
       <div
-        :class="$style.push"
-      >
-        <button
-          @click="pushWindow"
-          :class="$style.push_button"
-        >
-          push!!!
-        </button>
-        <div
-          v-if="isHidePushWindow"
-          :class="$style.window"
-        >
-          <div
-            :class="$style.window_container"
-          >
-            <div
-              :class="$style.window_image"
-            >
-              <PushTimer />
-              <div
-                :class="$style.window_image_heading"
-              >
-                <span>お知らせ</span>
-                <span>ポモドーロが終了しました。</span>
-                <span>Pomodoro TImer</span>
-              </div>
-            </div>
-            <div
-              :class="$style.window_contents"
-            >
-              <button
-                @click="isHidePushWindow = false"
-              >
-                ×
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div
         :class="$style.contents_grid"
       >
         <TimerManager
@@ -118,7 +78,6 @@
                   @cancelButtonClick="cancelButtonClick"
                   :class="$style.todo_add"
                 />
-                <!-- タスク一覧下部に固定配置 -->
                 <button
                   v-if="!todoAddMode"
                   @click="startAddMode"
@@ -132,9 +91,7 @@
         </div>
       </div>
     </div>
-    <SoundPlayer
-      :class="$style.sound"
-    />
+    <!-- SoundPlayer 未定 -->
   </div>
 </template>
 
@@ -142,7 +99,6 @@
 import TaskDots from '@/assets/images/task_dots.svg'
 import TaskDelete from '@/assets/images/task_delete.svg'
 import TaskHide from '@/assets/images/task_hide.svg'
-import PushTimer from '@/assets/images/push_logo.svg'
 import {mapActions, mapGetters} from 'vuex'
 
 export default {
@@ -151,7 +107,6 @@ export default {
     TaskDots,
     TaskHide,
     TaskDelete,
-    PushTimer,
   },
   data() {
     return {
@@ -220,9 +175,6 @@ export default {
     hideDropdown() {
       this.isDropdownVisible = false;
     },
-    pushWindow() {
-      this.isHidePushWindow = true
-    },
   },
 }
 </script>
@@ -252,6 +204,7 @@ export default {
 
   &_grid {
     display: flex;
+    height : 100vh;
   }
 }
 
@@ -406,52 +359,5 @@ export default {
   bottom  : 0;
   width   : 100%;
   z-index : v.zIndex('nav');
-}
-
-.push {
-  position: relative;
-
-  .window {
-    position: absolute;
-    right   : 0;
-    bottom  : 0;
-    border: solid 1px var(--dull-gray);
-
-    &_container {
-      padding         : calc(var(--bv) * 2);
-      display         : flex;
-      width           : 420px;
-      background-color: var(--white);
-    }
-
-    &_image {
-        display: flex;
-        gap: 0 calc(var(--bv) * 2);
-        
-        svg {
-          width  : 80px;
-          height : 80px;
-        }
-
-        &_heading {
-
-          span {
-            display: block;
-
-            &:last-of-type {
-              font-size: 12px;
-              color: var(--dull-gray);
-            }
-          }
-        }
-    }
-    &_contents {
-      display        : flex;
-      align-items    : flex-start;
-      justify-content: flex-end;
-      flex           : 1 0 auto;
-
-    }
-  }
 }
 </style>
