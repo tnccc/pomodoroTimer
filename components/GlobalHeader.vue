@@ -12,27 +12,6 @@
           <a href="/">Pomodoro Timer</a>
         </h1>
       </div>
-      <div
-        v-show="isDropdownVisible"
-        :class="$style.dropdown"
-      >
-        <div
-          :class="$style.dropdown_list"
-        >
-          <button
-            :class="$style.item"
-          >
-            <MenuTimer />
-            <p>タイマーの設定をする</p>
-          </button>
-          <button
-            :class="$style.item"
-          >
-            <MenuAlarm />
-            <p>アラームの設定をする</p>
-          </button>
-        </div>
-      </div>
     </div>
   </header>
 </template>
@@ -41,11 +20,6 @@
 
 export default {
   name: 'GlobalHeader',
-  data() {
-    return {
-      isDropdownVisible: false,
-    }
-  }
 }
 </script>
 

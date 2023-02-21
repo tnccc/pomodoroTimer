@@ -1,15 +1,43 @@
 <template>
-  <!-- TODO: プログレスバーの追加 -->
-  <!-- TODO: タイマー終了時のプッシュ通知 CSS修正 -->
   <div
     :class="$style.container"
   >
-    <div 
-      v-if="isHidePushWindow"
-      :class="$style.window_image_heading" 
+    <div
+      :class="[
+        $style.push,
+        {[$style.display]: isHidePushWindow}
+      ]"
     >
-      <span>お知らせ</span>
-      <span>{{finishMessage}}</span>
+      <div
+        v-if="isHidePushWindow"
+        :class="$style.window"
+      >
+        <div
+          :class="$style.window_container"
+        >
+          <div
+            :class="$style.window_image"
+          >
+            <PushTimer />
+            <div
+              :class="$style.window_image_heading"
+            >
+              <span>お知らせ</span>
+              <span>{{ finishMessage }}</span>
+              <span>Pomodoro TImer</span>
+            </div>
+          </div>
+          <div
+            :class="$style.window_contents"
+          >
+            <button
+              @click="isHidePushWindow = false"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
     <div
       :class="$style.mode"
@@ -19,8 +47,8 @@
         :disabled="timerStarting"
         :class="
         [$style.mode_button, $style.mode_button_pomodoro,
-          {[$style.current]: activeMode.name === 'pomodoro', 
-          'timer-stop': timerStarting && activeMode.name !== 'pomodoro'}
+          {[$style.current]: activeMode.name === 'pomodoro'},
+          {[$style.stop]: timerStarting && activeMode.name !== 'pomodoro'}
         ]"
       >
         Pomodoro
@@ -30,7 +58,8 @@
         @click="changeMode(modes.rest)"
         :disabled="timerStarting"
         :class="[$style.mode_button, $style.mode_button_rest,
-          {[$style.current]: activeMode.name === 'rest', 'timer-stop': timerStarting && activeMode.name !== 'rest'}
+          {[$style.current]: activeMode.name === 'rest'},
+          {[$style.stop]: timerStarting && activeMode.name !== 'rest'},
         ]"
       >
         Rest
@@ -40,7 +69,8 @@
         @click="changeMode(modes.longRest)"
         :disabled="timerStarting"
         :class="[$style.mode_button, $style.mode_button_rest,
-        {[$style.current]: activeMode.name === 'longrest', 'timer-stop': timerStarting && activeMode.name !== 'longrest'}
+        {[$style.current]: activeMode.name === 'longrest'},
+        {[$style.stop]: timerStarting && activeMode.name !== 'longrest'},
       ]"
       >
         Long Rest
@@ -61,22 +91,25 @@
         @start="onTimerStart"
         @pause="onTimerPause"
         @finish="onTimerFinish"
+        @reset="resetTimer"
       />
     </div>
-    <div>currentMode: {{ activeMode.name }}</div>
-    <div><button @click="resetTimer">RESET TEST</button></div>
   </div>
 </template>
 
 <script>
 import adage from '../module/adage.json'
+import PushTimer from '@/assets/images/push_logo.svg'
 
 export default {
   name: 'TimerManager',
+  components: {
+    PushTimer,
+  },
   data() {
     return  {
       modes: {
-        pomodoro: { id: 1, name:'pomodoro', nextModeKey: 'rest', defaultTime: 3, finishedCount: 0, finishedMessage: 'ポモドーロが終了しました'},
+        pomodoro: { id: 1, name:'pomodoro', nextModeKey: 'rest', defaultTime: 600, finishedCount: 0, finishedMessage: 'ポモドーロが終了しました'},
         rest    : { id: 2, name:'rest', nextModeKey: 'pomodoro', defaultTime: 300, finishedCount: 0, finishedMessage: '休憩が終了しました'},
         longRest: { id: 3, name:'longrest', nextModeKey: 'pomodoro', defaultTime: 1200, finishedCount: 0, finishedMessage: '休憩が終了しました'},
       },
@@ -128,11 +161,14 @@ export default {
       this.activeMode = nextMode
     },
     resetTimer() {
-      //アラートを表示させる
-      this.resetCount += 1;
-      this.modes.pomodoro.finishedCount = 0
-      this.modes.rest.finishedCount = 0
-      this.modes.longRest.finishedCount = 0
+      const result = window.confirm('すべてリセットしますか？(回数カウントも初期化されます)')
+      if(result) {
+        this.resetCount += 1;
+        this.modes.pomodoro.finishedCount = 0
+        this.modes.rest.finishedCount = 0
+        this.modes.longRest.finishedCount = 0
+      }
+      return
     },
   },
 }
@@ -180,6 +216,11 @@ export default {
         &::before {
           opacity: 1;
         }
+      }
+
+      &.stop {
+        opacity: .5;
+        cursor: not-allowed;
       }
 
       &.current {
@@ -239,6 +280,60 @@ export default {
         color           : var(--green);
         background-color: var(--white);
         border          : solid 2px var(--green);
+      }
+    }
+  }
+
+  .push {
+    position: absolute;
+    width: 100%;
+    z-index: 0;
+
+    &.display {
+      z-index : v.zIndex('contents');
+    }
+
+    .window {
+      position: absolute;
+      right   : -15%;
+      top     : v.clampFunc(-92, -100, -128, 1480);
+      border  : solid 1px var(--dull-gray);
+
+      &_container {
+        padding         : calc(var(--bv) * 4) calc(var(--bv) * 2);
+        display         : flex;
+        width           : 420px;
+        min-height      : 128px;
+        background-color: var(--white);
+      }
+
+      &_image {
+          display: flex;
+          gap: 0 calc(var(--bv) * 2);
+          
+          svg {
+            width  : 80px;
+            height : 80px;
+          }
+
+          &_heading {
+
+            span {
+              display: block;
+
+              &:last-of-type {
+                font-size: 12px;
+                color: var(--dull-gray);
+              }
+            }
+          }
+      }
+      &_contents {
+        display        : flex;
+        align-items    : flex-start;
+        justify-content: flex-end;
+        flex           : 1 0 auto;
+
       }
     }
   }
