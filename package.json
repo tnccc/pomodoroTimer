@@ -13,7 +13,7 @@
     "lintfix": "prettier --write --list-different . && yarn lint:js --fix"
   },
   "dependencies": {
-    "core-js": "^3.25.3",
+    "core-js": "^3.27.2",
     "global": "^4.4.0",
     "nuxt": "^2.15.8",
     "ress": "^5.0.2",

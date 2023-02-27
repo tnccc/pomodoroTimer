@@ -2,6 +2,7 @@
   <div
     :class="$style.wrapper"
   >
+<<<<<<< Updated upstream
     <div
       :class="$style.container"
     >
@@ -71,6 +72,16 @@
         </div>
       </div>
     </div>
+=======
+    <TodoItem 
+      v-for="(todo) in todos"
+      :key="todo.id"
+      :todo="todo"
+      @overWrite="overWriteTodo"
+      @delete="deleteTodo"
+      :class="[$style.item, todo.done === true ? $style.done : '']"
+    />
+>>>>>>> Stashed changes
   </div>
 </template>
 
@@ -89,8 +100,16 @@ export default {
     ...mapState(['todos'])
   },
   methods: {
+<<<<<<< Updated upstream
     taskInsert() {
 
+=======
+    overWriteTodo(todo) {
+      this.$emit('overWriteTodo', todo)
+    },
+    deleteTodo(todo) {
+      this.$emit('deleteTodo', todo)
+>>>>>>> Stashed changes
     },
   },
 }
@@ -108,6 +127,7 @@ export default {
 }
 
 .container {
+<<<<<<< Updated upstream
   padding: 0 calc(var(--sv) * 4);
 }
 
@@ -190,6 +210,10 @@ export default {
         }
       }
     }
+=======
+  display            : grid;
+  gap: calc(var(--bv) * 2) 0;
+>>>>>>> Stashed changes
 }
 
 
