@@ -1,6 +1,7 @@
 <template>
   <div
     :class="$style.container"
+    @click="hideDropdown"
   >
     <GlobalHeader />
     <div
@@ -9,7 +10,7 @@
       <div
         :class="$style.contents_grid"
       >
-        <PomodoroTimer 
+        <TimerManager
           :class="$style.timer"
         />
         <div
@@ -26,39 +27,36 @@
               >
                 Tasks
               <span :class="$style.num">
-                {{ todos.length  }}
+                {{ todos.filter(todo => !todo.done).length }}
               </span>
               </h2>
               <button
                 :class="$style.todo_heading_button"
               >
                 <TaskDots 
-                  @click="todoDropdownOpen = !todoDropdownOpen"
+                  @click.stop="isDropdownVisible = !isDropdownVisible"
                   :class="$style.dots"
                 />
               </button>
               <div
-                v-if="todoDropdownOpen"
+                v-show="isDropdownVisible"
                 :class="$style.todo_dropdown"
               >
-                <div
+                <button
+                  @click="isHideCompletedTasks = !isHideCompletedTasks"
                   :class="$style.todo_dropdown_item"
                 >
                   <TaskHide />
-                  完了したタスクを非表示にする
-                </div>
-                <div
-                  :class="$style.todo_dropdown_item"
-                >
-                  <TaskDelete />  
-                  タスクを削除する
-                </div>
-                <div
+                  <span v-show="!isHideCompletedTasks">完了したタスクを非表示にする</span>
+                  <span v-show="isHideCompletedTasks">完了したタスクを表示する</span>
+                </button>
+                <button
+                  @click="doneDeleteTodo"
                   :class="$style.todo_dropdown_item"
                 >
                   <TaskDelete />
-                  完了したタスクを削除する
-                </div>
+                  <span>完了したタスクを削除する</span>
+                </button>
               </div>
             </div>
             <div
@@ -68,8 +66,9 @@
                 :class="$style.todo_list_container"
               >
                 <TodoList 
-                  @deleteTodoStart="deleteTodoStart"
-                  :todos="todos"
+                  @overWriteTodo="overWriteTodo"
+                  @deleteTodo="deleteTodo"
+                  :todos="displayTodos"
                 />
               </div>
               <div>
@@ -79,9 +78,9 @@
                   @cancelButtonClick="cancelButtonClick"
                   :class="$style.todo_add"
                 />
-                <!-- タスク一覧下部に固定配置 -->
                 <button
-                  v-if="!todoAddMode" @click="startAddMode"
+                  v-if="!todoAddMode"
+                  @click="startAddMode"
                   :class="$style.todo_input"
                 > 
                   タスクを入力をしてください。
@@ -92,9 +91,7 @@
         </div>
       </div>
     </div>
-    <SoundPlayer
-      :class="$style.sound"
-    />
+    <!-- SoundPlayer 未定 -->
   </div>
 </template>
 
@@ -102,7 +99,7 @@
 import TaskDots from '@/assets/images/task_dots.svg'
 import TaskDelete from '@/assets/images/task_delete.svg'
 import TaskHide from '@/assets/images/task_hide.svg'
-import {mapActions, mapGetters} from 'vuex';
+import {mapActions, mapGetters} from 'vuex'
 
 export default {
   name: 'Top-Page',
@@ -113,20 +110,35 @@ export default {
   },
   data() {
     return {
-      todoAddMode: false,
-      todoDropdownOpen: false,
-      text       : '',
+      todoAddMode         : false,
+      isDropdownVisible   : false,
+      isHideCompletedTasks: false,
+      isHidePushWindow    : false,
+      text                : '',
     }
+  },
+  updated() {
+    setTimeout(() => {
+      this.isHidePushWindow = false
+    }, 2500)
   },
   computed: {
     ...mapGetters({
       todos: 'todo/todoList'
     }),
+    displayTodos() {
+      if (this.isHideCompletedTasks) {
+        return this.todos.filter((todo) => !todo.done)
+      }
+      return this.todos
+    },
   },
   methods: {
     ...mapActions({
       addTodoItem: 'todo/add',
-      deleteItem: 'todo/delete'
+      deleteItem: 'todo/delete',
+      doneDelete: 'todo/doneDelete',
+      overWrite: 'todo/overWrite',
     }),
     addTodo(text) {
       this.text = text
@@ -138,15 +150,30 @@ export default {
         this.todoAddMode = false
       }
     },
-    deleteTodoStart(todo) {
+    overWriteTodo(todo) {
+      console.log('=> overWriteTodo', todo)
+      this.overWrite(todo)
+    },
+    deleteTodo(todo) {
       const result = window.confirm('タスクを削除しますか？')
       result ? this.deleteItem(todo) : ''
+    },
+    doneDeleteTodo() {
+      const result = window.confirm('完了したタスクを削除しますか？')
+      if(result) {
+        this.doneDelete()
+        this.isDropdownVisible = false
+      } 
+      this.isDropdownVisible = false
     },
     cancelButtonClick() {
       this.todoAddMode = false
     },
     startAddMode() {
       this.todoAddMode = true
+    },
+    hideDropdown() {
+      this.isDropdownVisible = false;
     },
   },
 }
@@ -159,15 +186,16 @@ export default {
 @use "@/assets/scss/mixin" as m;
 
 .container {
-  width           : 100%;
-  --bv            : .5rem;
-  --white         : #fff;
-  --black         : #202124;
-  --blue          : #0B57D0;
-  --gray          : #5F6368;
-  --light-gray    : #E2E8F0;
-  --dull-gray     : #CBD5E1;
-  --accent-color  : #0B57D0;
+  width         : 100%;
+  --bv          : .5rem;
+  --white       : #fff;
+  --black       : #202124;
+  --blue        : #0B57D0;
+  --gray        : #5F6368;
+  --light-gray  : #E2E8F0;
+  --dull-gray   : #CBD5E1;
+  --green       : #059669;
+  --border-width: 0;
 }
 
 .contents {
@@ -176,6 +204,7 @@ export default {
 
   &_grid {
     display: flex;
+    height : 100vh;
   }
 }
 
@@ -249,9 +278,11 @@ export default {
     top             : 100%;
     right           : 0;
     padding         : var(--bv) calc(var(--bv) * 2);
+    max-width       : 254px;
+    width           : 100%;
     background-color: var(--white);
     border-radius   : calc(var(--bv) * 2);
-    box-shadow: rgba(0,0,0,0.2) 0px 12px 28px 0px,rgba(0,0,0,0.1) 0px 2px 4px 0px,hsla(0,0%,100%,0.5) 0px 0px 0px 1px inset;
+    box-shadow      : rgba(0,0,0,0.2) 0px 12px 28px 0px, rgba(0,0,0,0.1) 0px 2px 4px 0px, hsla(0,0%,100%,0.5) 0px 0px 0px 1px inset;
     z-index         : v.zIndex('contents');
 
     &.show {
@@ -273,6 +304,11 @@ export default {
       align-items: center;
       font-size  : v.clampFunc(13.5, 14, 15, 1480);
       gap        : 0 var(--bv);
+      transition : opacity .3s;
+
+      &:hover {
+        opacity: .6;
+      }
 
       svg {
         width : 20px;

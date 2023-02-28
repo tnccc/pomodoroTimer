@@ -3,10 +3,11 @@
     :class="$style.container"
   >
     <div
-      :class="$style.item"
+      :class="[isDone ? $style.done : '', $style.item]"
     >
       <button
-        :class="$style.item_circle"
+        @click="doneToggle"
+        :class="[isDone ? $style.done : '', $style.item_circle ]"
       />
       <textarea
         v-model="todoMessage"
@@ -27,7 +28,7 @@
         </button>
         <button
           v-if="editMode"
-          @click=""
+          @click="overWrite"
           :class="$style.item_btn"
         >
           <TaskSave />
@@ -71,6 +72,11 @@ export default {
       type    : Object,
     },
   },
+  computed: {
+    isDone() {
+      return this.todo.done
+    },
+  },
   methods: {
     editStart() {
       this.editAble = true
@@ -80,14 +86,26 @@ export default {
       if(e.keyCode === 13) {
         this.editAble = false
         this.editMode = false
+        this.overWrite();
         return
       }
     },
-    save() {
-      // TODO:ここは佐藤と一緒にやりましょう(Editの保存は少し複雑なので)
+    overWrite() {
+      const newTodo = {
+        ...this.todo,
+        task: this.todoMessage,
+      }
+      this.$emit('overWrite', newTodo);
     },
     deleteButtonClick() {
-      this.$emit('deleteButtonClick', this.todo)
+      this.$emit('delete', this.todo)
+    },
+    doneToggle() {
+      const newTodo = {
+        ...this.todo,
+        done: !this.todo.done,
+      }
+      this.$emit('overWrite', newTodo);
     },
   },
 }
@@ -118,6 +136,14 @@ export default {
     }
   }
 
+  &.done {
+    background-color: rgba(var(--blue) , .6);
+
+    .item_text {
+      text-decoration: line-through;
+    }
+  }
+
   &_circle {
     position     : relative;
     margin-top   : 5px;
@@ -139,6 +165,22 @@ export default {
         border-left  : 2px solid var(--gray);
         border-bottom: 2px solid var(--gray);
         transform    : rotate(-45deg);
+      }
+    }
+
+    &.done {
+      background-color: rgba(148,163,184, .6);
+
+      &:before {
+        content      : "";
+        position        : absolute;
+        top             : 5px;
+        left            : 4px;
+        width           : 10px;
+        height          : 5px;
+        border-left     : 2px solid var(--white);
+        border-bottom   : 2px solid var(--white);
+        transform       : rotate(-45deg);
       }
     }
   }

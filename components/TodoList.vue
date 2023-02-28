@@ -3,10 +3,12 @@
     :class="$style.container"
   >
     <TodoItem 
-      v-for="(todo, index) in todos"
-      :key="index"
+      v-for="(todo) in todos"
+      :key="todo.id"
       :todo="todo"
-      @deleteButtonClick="deleteTodo"
+      @overWrite="overWriteTodo"
+      @delete="deleteTodo"
+      :class="[$style.item, todo.done === true ? $style.done : '']"
     />
   </div>
 </template>
@@ -22,8 +24,11 @@ export default {
     },
   },
   methods: {
+    overWriteTodo(todo) {
+      this.$emit('overWriteTodo', todo)
+    },
     deleteTodo(todo) {
-      this.$emit('deleteTodoStart', todo)
+      this.$emit('deleteTodo', todo)
     },
   },
 }
@@ -36,7 +41,7 @@ export default {
 @use "@/assets/scss/mixin" as m;
 
 .container {
-  display: grid;
+  display            : grid;
   gap: calc(var(--bv) * 2) 0;
 }
 </style>
