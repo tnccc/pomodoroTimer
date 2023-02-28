@@ -5,7 +5,6 @@ export default {
 
     router: {
         // base: "/pomodoroTimer/", ローカルで作業する際はこちらに変更する
-        mode: "hash",
     },
 
     generate: {
