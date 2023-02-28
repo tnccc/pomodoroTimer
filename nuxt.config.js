@@ -4,7 +4,8 @@ export default {
     ssr: false,
 
     router: {
-        base: "/pomodoroTimer/",
+        // base: "/pomodoroTimer/",開発する際はこちらを使用
+        mode: "hash" //デプロイ時はこちらを使用
     },
 
     generate: {
